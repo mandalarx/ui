@@ -1,7 +1,7 @@
 {
   "project_id": "appgprj_6aa23b82b5e48191a2a53d7441c68bd8",
   "static": {
-    "directory": "storybook-static"
+    "directory": "out"
   },
   "d1": null,
   "r2": null
