@@ -14,7 +14,8 @@ Storybook runs at `http://localhost:6006`. The small Next.js reference surface i
 ## Registry coverage
 
 - `components/ui` owns the source for all 61 official `new-york-v4` components.
-- `registry/blocks` stores the complete official registry payload for all 97 blocks available in the recorded snapshot.
+- `blocks` contains isolated, runnable source for all 97 official blocks and generated full-page Storybook stories.
+- `registry/blocks` stores the complete upstream registry payload for each block.
 - `registry/shadcn-snapshot.json` records the source, retrieval time, names, and counts.
 
 Check the snapshot against the current official registry:
@@ -27,6 +28,7 @@ Refresh the archived block payloads after reviewing upstream changes:
 
 ```bash
 pnpm registry:sync
+pnpm blocks:materialize
 ```
 
 Generated shadcn source is intentionally owned here. Do not overwrite customized files automatically when updating the registry.
