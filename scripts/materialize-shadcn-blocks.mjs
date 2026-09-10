@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { basename, dirname, join } from "node:path"
 
 const root = process.cwd()
@@ -21,7 +21,8 @@ for (const filename of readdirSync(payloadDir).filter((name) => name.endsWith(".
     const destination = join(outputDir, name, relative)
     const content = rewriteImports(file.content, name)
     mkdirSync(dirname(destination), { recursive: true })
-    writeFileSync(destination, `${content.trim()}\n`)
+    // Local blocks are owned by this design system. New snapshots never overwrite adaptations.
+    if (!existsSync(destination)) writeFileSync(destination, `${content.trim()}\n`)
 
     if (relative === "page.tsx" || payload.files.length === 1) {
       const named = content.match(/export function\s+([A-Za-z0-9_]+)/)?.[1]

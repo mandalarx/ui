@@ -26,7 +26,7 @@
   --muted-foreground: oklch(0.47 0.025 286);
   --accent: oklch(0.935 0.028 293);
   --accent-foreground: oklch(0.34 0.135 293);
-  --destructive: oklch(0.57 0.225 27);
+  --destructive: oklch(0.52 0.21 27);
   --border: oklch(0.885 0.012 286);
   --input: oklch(0.86 0.015 286);
   --ring: oklch(0.62 0.215 293);
@@ -109,11 +109,121 @@
   --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border); --color-sidebar-ring: var(--sidebar-ring);
-  --radius-sm: calc(var(--radius) - 4px); --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius); --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 0.375rem; --radius-md: var(--radius);
+  --radius-lg: 0.75rem; --radius-xl: 1rem;
   --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
+
+/* Violet Atelier: shared primitive slots keep every block on the same system. */
+:root {
+  --ease-spring: cubic-bezier(.22, 1.18, .36, 1);
+  --surface-shadow: 0 2px 4px oklch(.2 .03 286 / .025), 0 12px 32px -16px oklch(.2 .03 286 / .16);
+  --overlay-shadow: 0 8px 16px -8px oklch(.2 .04 286 / .12), 0 28px 80px -20px oklch(.2 .04 286 / .24);
+  --surface-highlight: oklch(1 0 0 / .8);
+}
+.dark {
+  --surface-shadow: 0 2px 4px oklch(0 0 0 / .16), 0 16px 40px -16px oklch(0 0 0 / .4);
+  --overlay-shadow: 0 8px 20px -8px oklch(0 0 0 / .4), 0 32px 88px -16px oklch(0 0 0 / .6);
+  --surface-highlight: oklch(1 0 0 / .09);
+}
+
+@layer atelier {
+  :where([data-slot]) {
+    transition-timing-function: var(--ease-standard);
+    transition-duration: var(--motion-base);
+  }
+  :where([data-slot="card"], [data-slot="item"][data-variant="outline"], [data-slot="empty"], [data-slot="alert"]) {
+    border-radius: 1rem;
+    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--surface-shadow);
+    background-image: linear-gradient(150deg, color-mix(in oklab, var(--primary) 3%, transparent), transparent 45%);
+  }
+  :where([data-slot="button"], [data-slot="toggle"], [data-slot="sidebar-menu-button"]) {
+    transition-property: background-color, color, box-shadow, border-color, translate, scale;
+    transition-timing-function: var(--ease-spring);
+    transition-duration: 260ms;
+  }
+  :where([data-slot="button"][data-variant="default"]) {
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
+    background-image: linear-gradient(180deg, oklch(1 0 0 / .08), transparent);
+  }
+  :where([data-slot="button"], [data-slot="toggle"]):active:not(:disabled):not([aria-disabled="true"]) { scale: .96; }
+  :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="input-group"], [data-slot="combobox-input"]) {
+    border-radius: var(--radius);
+    background-color: color-mix(in oklab, var(--card) 75%, var(--background));
+    box-shadow: inset 0 1px 2px oklch(.15 .02 286 / .035);
+    transition-property: border-color, box-shadow, background-color;
+  }
+  :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    border-radius: 1.25rem;
+    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
+    animation-duration: var(--motion-slow);
+    animation-timing-function: var(--ease-spring);
+  }
+  :where([data-slot="sheet-content"], [data-slot="drawer-content"]) { box-shadow: var(--overlay-shadow); animation-duration: 380ms; animation-timing-function: var(--ease-emphasized); }
+  :where([data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"], [data-slot="drawer-overlay"]) {
+    background: oklch(.1 .025 286 / .48);
+    backdrop-filter: blur(5px);
+    animation-duration: 240ms;
+  }
+  :where([data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"]) {
+    border-radius: .875rem;
+    background-color: color-mix(in oklab, var(--popover) 94%, transparent);
+    backdrop-filter: blur(20px) saturate(130%);
+    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-spring);
+  }
+  :where([data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"], [data-slot="context-menu-item"], [data-slot="menubar-item"], [data-slot="select-item"], [data-slot="command-item"]) {
+    border-radius: .5rem;
+    transition-property: background-color, color;
+    animation: atelier-item-in 240ms var(--ease-emphasized) both;
+  }
+  :where([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"]):nth-child(2) { animation-delay: 20ms; }
+  :where([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"]):nth-child(3) { animation-delay: 40ms; }
+  :where([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"]):nth-child(n+4) { animation-delay: 60ms; }
+  :where([data-slot="switch-thumb"], [data-slot="slider-thumb"]) { transition-timing-function: var(--ease-spring); transition-duration: 300ms; }
+  :where([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"]) { transition-property: background-color, border-color, box-shadow; }
+  :where([data-slot="checkbox-indicator"], [data-slot="radio-group-indicator"]) { animation: atelier-check-in 220ms var(--ease-spring); }
+  :where([data-slot="slider-range"], [data-slot="progress-indicator"]) { transition: transform 400ms var(--ease-emphasized), width 300ms var(--ease-emphasized); }
+  :where([data-slot="accordion-content"]) { animation-duration: 320ms; animation-timing-function: var(--ease-emphasized); }
+  :where([data-slot="accordion-trigger"]) { text-decoration: none; }
+  :where([data-slot="tabs-list"]) { position: relative; isolation: isolate; }
+  :where([data-slot="tabs-list"])::before {
+    content: ""; position: absolute; left: 0; top: 0; z-index: -1; pointer-events: none;
+    width: var(--indicator-width, 0px); height: var(--indicator-height, 0px);
+    transform: translate(var(--indicator-x, 0px), var(--indicator-y, 0px));
+    border: 1px solid var(--border); border-radius: .5rem;
+    background: var(--card); box-shadow: var(--surface-shadow); opacity: var(--indicator-opacity, 0);
+    transition: opacity 120ms;
+  }
+  :where([data-slot="tabs-list"][data-variant="line"])::before {
+    background: linear-gradient(var(--primary), var(--primary)) bottom / 100% 2px no-repeat;
+    border: 0; border-radius: 0; box-shadow: none;
+  }
+  [data-slot="tabs-list"] [data-slot="tabs-trigger"][data-state="active"] { background: transparent; box-shadow: none; border-color: transparent; color: var(--foreground); }
+  [data-slot="tabs-list"] [data-slot="tabs-trigger"]::after { display: none; }
+  :where([data-slot="tabs-content"][data-state="active"]) { animation: atelier-panel-in 240ms var(--ease-emphasized); }
+  :where([data-slot="sidebar-menu-button"][data-active="true"]) { box-shadow: inset 3px 0 0 var(--primary); }
+  :where([data-slot="navigation-menu-indicator"]) { transition: width 300ms var(--ease-spring), transform 300ms var(--ease-spring); }
+  :where([data-slot="table-row"]) { transition: background-color 160ms; }
+  :where([data-slot="badge"]) { border-radius: 999px; }
+  .atelier-hero { position: relative; overflow: hidden; isolation: isolate; }
+  .atelier-hero::before {
+    content: ""; position: absolute; z-index: -1; inset: -50%; pointer-events: none;
+    background: radial-gradient(ellipse at 70% 45%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 42%);
+    animation: atelier-ambient 12s ease-in-out infinite alternate;
+  }
+  .sbdocs.sbdocs-wrapper { background: var(--background); color: var(--foreground); }
+}
+@media (hover: hover) {
+  :where([data-slot="button"]):hover:not(:disabled):not([aria-disabled="true"]) { translate: 0 -1px; }
+  :where([data-slot="button"][data-variant="default"]):hover:not(:disabled) { box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
+}
+@keyframes atelier-item-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+@keyframes atelier-check-in { from { opacity: 0; scale: .65; } to { opacity: 1; scale: 1; } }
+@keyframes atelier-panel-in { from { opacity: 0; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
+@keyframes atelier-ambient { from { transform: translate(-4%, -2%); } to { transform: translate(4%, 2%); } }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
@@ -133,4 +243,8 @@
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+[data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
+  animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important; scroll-behavior: auto !important;
 }

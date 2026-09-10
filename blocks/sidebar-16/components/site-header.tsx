@@ -22,6 +22,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 flex w-full items-center border-b bg-background">
       <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
         <Button
+          aria-label="Toggle sidebar"
           className="h-8 w-8"
           variant="ghost"
           size="icon"

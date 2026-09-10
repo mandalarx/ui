@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { MotionProvider } from "@/components/motion-provider"
 
 import "@fontsource-variable/manrope"
 import "@fontsource/ibm-plex-mono/400.css"
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <TooltipProvider>{children}</TooltipProvider>
+          <MotionProvider><TooltipProvider>{children}</TooltipProvider></MotionProvider>
         </ThemeProvider>
       </body>
     </html>

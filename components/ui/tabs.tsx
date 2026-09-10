@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Tabs as TabsPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { useActiveIndicator } from "@/hooks/use-active-indicator"
 
 function Tabs({
   className,
@@ -43,11 +44,14 @@ const tabsListVariants = cva(
 function TabsList({
   className,
   variant = "default",
+  ref,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
   VariantProps<typeof tabsListVariants>) {
+  const indicatorRef = useActiveIndicator(ref)
   return (
     <TabsPrimitive.List
+      ref={indicatorRef}
       data-slot="tabs-list"
       data-variant={variant}
       className={cn(tabsListVariants({ variant }), className)}

@@ -16,6 +16,8 @@ if (checkOnly) {
   compare("blocks", snapshot.blocks, blocks.map(({ name }) => name))
   const missingSources = snapshot.blocks.filter((name) => !existsSync(join(blocksDir, `${name}.json`)))
   if (missingSources.length) fail(`Missing block payloads: ${missingSources.join(", ")}`)
+  const missingComponents = snapshot.components.filter((name) => !existsSync(join(process.cwd(), "components", "ui", `${name}.tsx`)))
+  if (missingComponents.length) fail(`Missing local components: ${missingComponents.join(", ")}`)
   console.log(`Registry complete: ${components.length} components and ${blocks.length} blocks.`)
   process.exit(0)
 }

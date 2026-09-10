@@ -33,6 +33,8 @@
     ]
   },
   "include": [
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
@@ -41,6 +43,8 @@
     "**/*.mts"
   ],
   "exclude": [
+    "out",
+    "dist",
     "node_modules",
     "examples"
   ]

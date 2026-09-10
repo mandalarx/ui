@@ -110,12 +110,13 @@ export function NavActions() {
       <div className="hidden font-medium text-muted-foreground md:inline-block">
         Edit Oct 08
       </div>
-      <Button variant="ghost" size="icon" className="h-7 w-7">
+      <Button aria-label="Favorite page" variant="ghost" size="icon" className="h-7 w-7">
         <Star />
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
+            aria-label="Page actions"
             variant="ghost"
             size="icon"
             className="h-7 w-7 data-[state=open]:bg-accent"
@@ -124,6 +125,7 @@ export function NavActions() {
           </Button>
         </PopoverTrigger>
         <PopoverContent
+          aria-label="Page actions"
           className="w-56 overflow-hidden rounded-lg p-0"
           align="end"
         >

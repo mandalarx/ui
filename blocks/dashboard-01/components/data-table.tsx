@@ -160,7 +160,7 @@ function DragHandle({ id }: { id: number }) {
 const columns = columnHelper.columns([
   columnHelper.display({
     id: "drag",
-    header: () => null,
+    header: () => <span className="sr-only">Reorder</span>,
     cell: ({ row }) => <DragHandle id={row.original.id} />,
   }),
   columnHelper.display({
@@ -302,6 +302,7 @@ const columns = columnHelper.columns([
   }),
   columnHelper.display({
     id: "actions",
+    header: () => <span className="sr-only">Actions</span>,
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -485,7 +486,7 @@ export function DataTable({
           </DropdownMenu>
           <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="sr-only lg:not-sr-only">Add Section</span>
           </Button>
         </div>
       </div>
