@@ -305,3 +305,32 @@
   animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
   transition-duration: .01ms !important; scroll-behavior: auto !important;
 }
+
+/* Copy with Header: layout stays independent of router and provider setup. */
+@layer atelier {
+  .azure-header { position: relative; z-index: 40; margin: 16px auto; width: calc(100% - 32px); max-width: 1280px; }
+  .azure-header[data-sticky="true"] { position: sticky; top: 16px; }
+  .header-bar { display: flex; align-items: center; gap: 24px; min-height: 72px; padding: 12px 20px; border: 1px solid color-mix(in oklab, var(--glass-highlight) 35%, var(--border)); border-radius: 20px; }
+  .header-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 240px; overflow-wrap: anywhere; font-size: 20px; font-weight: 700; letter-spacing: -.04em; border-radius: 8px; }
+  .header-brand:focus-visible { outline: 3px solid var(--ring); outline-offset: 4px; }
+  .header-desktop { display: none; }
+  .header-mobile { margin-left: auto; flex-shrink: 0; }
+  .header-link { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 12px; font-size: 14px; overflow-wrap: anywhere; transition: background-color var(--motion-base), color var(--motion-base); }
+  .header-link:hover, .header-link:focus-visible { background: var(--accent); color: var(--accent-foreground); }
+  .header-link:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+  .header-link[aria-current="page"], .azure-header [data-active="true"], .header-sheet [data-active="true"] { color: var(--primary); background-color: var(--accent); }
+  .header-link-icon { padding-top: 2px; flex-shrink: 0; }
+  .header-link-icon svg { width: 18px; height: 18px; }
+  .azure-header [data-slot="navigation-menu-trigger"] { background-color: transparent; height: auto; min-height: 40px; white-space: normal; text-align: left; }
+  .azure-header [data-slot="navigation-menu-trigger"][data-active="true"] { background-color: var(--accent); }
+  .azure-header .header-dropdown { width: 320px; max-width: calc(100vw - 64px); }
+  .header-sheet { width: min(90vw, 400px); max-width: 400px; height: 100dvh; overflow-y: auto; }
+  .header-sheet [data-slot="accordion-trigger"] { padding-inline: 12px; }
+  .header-mobile-actions { display: flex; flex-direction: column; gap: 12px; padding: 24px 16px; margin-top: auto; }
+  .header-mobile-actions [data-ui-button], .header-actions [data-ui-button] { white-space: normal; height: auto; min-height: 40px; overflow-wrap: anywhere; }
+  @media (min-width: 1024px) {
+    .header-desktop { display: flex; justify-content: center; flex: 1; min-width: 0; }
+    .header-actions { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 30%; }
+    .header-mobile { display: none; }
+  }
+}
