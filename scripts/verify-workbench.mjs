@@ -60,12 +60,26 @@ try {
       // Bands draw ticks where their rule meets the rails, and only one brand panel moves.
       assert.match(await page.locator(".azure-band").first().evaluate(el => getComputedStyle(el, "::before").backgroundImage), /linear-gradient/, "Band ticks must render")
       assert.equal(await page.locator('[data-slot="caustics"]').evaluateAll(panels => panels.filter(panel => getComputedStyle(panel, "::before").animationName !== "none").length), 1, "Exactly one moving brand panel per view")
-      // The signature ring is a static image that brightens on hover.
+      // The signature ring: a filamented texture over a gradient, drifting across itself.
       const signature = page.getByRole("link", { name: "Browse components" })
-      assert.match(await signature.evaluate(el => getComputedStyle(el, "::before").backgroundImage), /linear-gradient/, "Signature ring must render")
-      assert.equal(await signature.evaluate(el => getComputedStyle(el, "::before").animationName), "none", "Signature ring must not animate at rest")
+      const ring = await signature.evaluate(el => {
+        const before = getComputedStyle(el, "::before")
+        return { image: before.backgroundImage, size: before.backgroundSize, animation: `${before.animationName} ${before.animationDuration}`, chip: getComputedStyle(el, "::after").backgroundColor, base: getComputedStyle(el).backgroundColor }
+      })
+      assert.match(ring.image, /url\("data:image\/svg\+xml/, "Signature ring must carry its filament texture")
+      assert.match(ring.image, /linear-gradient/, "Signature ring must carry its gradient")
+      // Two layers (texture, gradient), so the computed value repeats.
+      assert.equal(ring.size, "150% 150%, 150% 150%", "The ring needs room to drift")
+      assert.equal(ring.animation, "azure-ring-drift 16s")
+      const ink = theme === "dark" ? "rgb(13, 29, 48)" : "rgb(16, 36, 59)"
+      assert.equal(ring.chip, ring.base, "The button carries the chip color too, so contrast tooling reads the label against it")
+      assert.equal(ring.chip, ink, "The chip stays ink in both themes")
+      // Hover brightens the ring and thickens it: the ring grows while the chip shrinks.
       await signature.hover()
-      await page.waitForFunction(() => getComputedStyle(document.querySelector('[data-variant="signature"]'), "::before").filter.includes("brightness"))
+      await page.waitForFunction(() => {
+        const el = document.querySelector('[data-variant="signature"]')
+        return getComputedStyle(el, "::before").filter.includes("brightness") && getComputedStyle(el, "::after").transform !== "none"
+      })
       await page.mouse.move(0, 0)
       const primaryButton = page.getByRole("button", { name: "Complete", exact: true })
       await primaryButton.hover()

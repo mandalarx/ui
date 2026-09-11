@@ -77,10 +77,12 @@ export const ReducedMotion: Story = { globals: { motion: "reduced" }, play: asyn
   const canvas = within(canvasElement)
   const button = canvas.getByRole("button", { name: "Edit specimen" })
   await waitFor(() => expect(parseFloat(getComputedStyle(button).transitionDuration)).toBeLessThan(.001))
-  // The signature ring is a static texture, not motion: it stays under reduced motion.
+  // Under reduced motion the signature ring holds still but keeps its texture.
   const signature = canvas.getByRole("button", { name: "Publish specimen" })
-  await expect(getComputedStyle(signature, "::before").display).not.toBe("none")
-  await expect(getComputedStyle(signature, "::before").backgroundImage).toContain("linear-gradient")
+  const ring = getComputedStyle(signature, "::before")
+  await expect(ring.display).not.toBe("none")
+  await expect(ring.backgroundImage).toContain("linear-gradient")
+  await expect(ring.animationName).toBe("none")
   await userEvent.click(button)
   const dialog = await within(document.body).findByRole("dialog")
   await expect(parseFloat(getComputedStyle(dialog).animationDuration)).toBeLessThan(.001)

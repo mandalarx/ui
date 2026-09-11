@@ -168,21 +168,29 @@
   /* Light sources: never text, fills, or borders. Sunlit stays at or below 15% alpha. */
   --light-cool: #57def3;
   --light-warm: #fff3d6;
-  /* Static grain for the signature ring and brand panels. */
+  /* The signature button's ink chip carries white text in both themes. */
+  --signature-fill: #10243b;
+  --signature-fill-foreground: #ffffff;
+  /* Filaments for the signature ring: turbulence smeared along one axis, then turned diagonal.
+     Alpha comes from one channel with a steep slope, so only the peaks read as bright threads. */
+  --signature-streaks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='s' x='-25%25' y='-25%25' width='150%25' height='150%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .14' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 2.2 0 0 0 -1.05'/%3E%3C/filter%3E%3Cg transform='rotate(-20 200 200)'%3E%3Crect x='-140' y='-140' width='680' height='680' filter='url(%23s)'/%3E%3C/g%3E%3C/svg%3E");
+  /* Static grain for the brand panels. */
   --frost-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .06 0 0 0 0 .14 0 0 0 0 .23 .14 0 0 0 -.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 .dark {
   --shadow-pop: 0 4px 12px oklch(0 0 0 / .36);
   --shadow-overlay: 0 24px 64px -16px oklch(0 0 0 / .64);
   --shimmer: oklch(1 0 0 / .07);
+  --signature-fill: var(--card);
+  --signature-fill-foreground: var(--foreground);
   --frost-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .93 0 0 0 0 1 .12 0 0 0 -.04'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 /* Aliases resolve wherever a theme class applies, including scoped .dark subtrees. */
 :root, .dark {
   /* Deprecated: the Azure Glass name for Glacier. */
   --glass-highlight: var(--light-cool);
-  /* The signature ring: Azure running into Glacier under the grain. A static image. */
-  --signature-ring: var(--frost-grain), linear-gradient(115deg, var(--primary) 25%, var(--light-cool));
+  /* The signature ring: bright filaments drifting over a field of Azure and Glacier. */
+  --signature-ring: var(--signature-streaks), linear-gradient(115deg, var(--primary) 15%, var(--light-cool) 55%, var(--primary) 100%);
   /* Shadow lists that carry a focus ring reserve its slot, so focus blooms from 0 instead of snapping. */
   --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 45%, transparent);
   --focus-ring-rest: 0 0 0 0 transparent;
@@ -209,16 +217,22 @@
   :where([data-ui-button]) { box-shadow: var(--focus-ring-rest); }
   :where([data-ui-button]):focus-visible { box-shadow: var(--focus-ring); }
   :where([data-ui-button][data-variant="outline"]) { background-color: transparent; border-color: var(--input); }
-  /* Signature: a static textured ring (::before) around a quiet fill (::after). Once per view. */
-  :where([data-ui-button][data-variant="signature"]) { position: relative; isolation: isolate; background-color: transparent; }
+  /* Signature: a drifting textured ring (::before) around an ink chip (::after). Once per view. */
+  /* The element carries the chip color too: the ::after chip is invisible to contrast tooling,
+     and both pseudo-elements paint above this, so it changes nothing on screen. */
+  :where([data-ui-button][data-variant="signature"]) { position: relative; isolation: isolate; background-color: var(--signature-fill); color: var(--signature-fill-foreground); }
+  :where([data-ui-button][data-variant="signature"]) > * { position: relative; z-index: 1; }
   :where([data-ui-button][data-variant="signature"])::before,
   :where([data-ui-button][data-variant="signature"])::after { content: ""; position: absolute; pointer-events: none; }
   :where([data-ui-button][data-variant="signature"])::before {
     inset: -3px; z-index: -2; border-radius: calc(var(--radius) + 3px);
     background: var(--signature-ring);
-    transition: filter var(--motion-base) var(--ease-standard), scale 260ms var(--ease-spring);
+    background-position: 50%;
+    background-size: 150% 150%;
+    animation: azure-ring-drift 16s ease-in-out infinite;
+    transition: filter .2s ease-in-out, transform .2s ease-in-out;
   }
-  :where([data-ui-button][data-variant="signature"])::after { inset: 0; z-index: -1; border-radius: inherit; background: var(--background); }
+  :where([data-ui-button][data-variant="signature"])::after { inset: 0; z-index: -1; border-radius: inherit; background: var(--signature-fill); transition: transform .3s ease-in-out; }
   /* The focus ring clears the brand ring. */
   :where([data-ui-button][data-variant="signature"]):focus-visible { box-shadow: 0 0 0 6px color-mix(in oklab, var(--ring) 45%, transparent); }
   :where([data-ui-button], [data-slot="toggle"]):active:not(:disabled):not([aria-disabled="true"]) { scale: .97; }
@@ -356,10 +370,14 @@
   @media (hover: hover) {
     :where([data-ui-button][data-variant="default"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: color-mix(in oklab, var(--primary) 86%, var(--foreground)); }
     :where([data-ui-button][data-variant="outline"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: var(--foreground); border-color: var(--foreground); color: var(--background); }
-    :where([data-ui-button][data-variant="signature"]):hover:not(:disabled):not([aria-disabled="true"])::before { filter: brightness(1.2) saturate(1.15); scale: 1.03 1.08; }
+    /* The ring thickens because the outer layer grows while the chip shrinks. */
+    :where([data-ui-button][data-variant="signature"]):hover:not(:disabled):not([aria-disabled="true"])::before { filter: brightness(1.3); transform: scale(1.0125, 1.025); }
+    :where([data-ui-button][data-variant="signature"]):hover:not(:disabled):not([aria-disabled="true"])::after { transform: scale(.98, .96); }
   }
   .sbdocs.sbdocs-wrapper { background: var(--background); color: var(--foreground); }
 }
+/* The ring drifts across its own texture: the background is larger than the box. */
+@keyframes azure-ring-drift { 0%, 100% { background-position: 40% 40%; } 50% { background-position: 60% 60%; } }
 @keyframes azure-item-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
 @keyframes azure-check-in { from { opacity: 0; scale: .65; } to { opacity: 1; scale: 1; } }
 @keyframes azure-check-draw { from { stroke-dashoffset: 23; } to { stroke-dashoffset: 0; } }
@@ -391,6 +409,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-slot="skeleton"]::after, [data-slot="progress-indicator"]::after { display: none !important; }
+  /* The ring keeps its texture and holds still. */
+  [data-ui-button][data-variant="signature"]::before { animation: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
@@ -400,6 +420,7 @@
   }
 }
 [data-motion="reduced"] [data-slot="skeleton"]::after, [data-motion="reduced"] [data-slot="progress-indicator"]::after { display: none !important; }
+[data-motion="reduced"] [data-ui-button][data-variant="signature"]::before { animation: none !important; }
 [data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
   animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
   transition-duration: .01ms !important; scroll-behavior: auto !important;
