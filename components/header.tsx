@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { usePointerLight } from "@/components/effects/pointer-light"
 
 type HeaderLink = {
   id: string
@@ -54,7 +53,6 @@ export function Header({
   const [open, setOpen] = React.useState(false)
   const brandRef = React.useRef<HTMLAnchorElement>(null)
   const desktopResize = React.useRef(false)
-  const barRef = usePointerLight<HTMLDivElement>()
 
   React.useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)")
@@ -76,13 +74,13 @@ export function Header({
       aria-current={item.href === activeHref ? "page" : undefined}
       className="header-link" onClick={mobile ? () => setOpen(false) : undefined}>
       {item.icon && <span aria-hidden="true" className="header-link-icon">{item.icon}</span>}
-      <span className="min-w-0"><span className="block font-medium">{item.label}</span>
+      <span className="min-w-0"><span className="header-link-label block font-medium">{item.label}</span>
         {item.description && <span className="mt-1 block text-sm text-muted-foreground">{item.description}</span>}
       </span>
     </Link>
   )
   const renderActions = (mobile = false) => actions.map(action => (
-    <Button key={action.id} asChild variant={action.variant === "secondary" ? "secondary" : "default"}>
+    <Button key={action.id} asChild variant={action.variant === "secondary" ? "outline" : "default"}>
       <Link href={action.href} target={action.target} rel={action.rel}
         onClick={mobile ? () => setOpen(false) : undefined}>
         {action.icon && <span aria-hidden="true">{action.icon}</span>}{action.label}
@@ -91,7 +89,7 @@ export function Header({
   ))
 
   return <header data-slot="header" data-sticky={sticky} className={cn("azure-header", className)}>
-    <div ref={barRef} data-surface="glass" data-light="follow" className="header-bar">
+    <div className="header-bar">
       <Link ref={brandRef} href={brandHref} aria-label={brandLabel} className="header-brand">{brand}</Link>
       <div className="header-desktop">
         <NavigationMenu aria-label={navigationLabel} viewport={false}>
