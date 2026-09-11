@@ -1,6 +1,7 @@
 import { addons } from "storybook/manager-api"
 import { atelierTheme } from "./atelier-theme"
-import "@fontsource-variable/manrope"
+import "@fontsource-variable/inter"
+import "@fontsource-variable/geist-mono"
 
 const preference = window.matchMedia("(prefers-color-scheme: dark)")
 function update() {

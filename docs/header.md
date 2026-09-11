@@ -29,7 +29,7 @@ Copy these files, preserving their relative paths (or adjust imports):
 
 The header bar follows a mouse or pen with a soft highlight and brightens its rim nearest the pointer. The light appears only when `components/effects/effects.css` is imported after `app/globals.css`; without it, the header is unchanged.
 
-Install `radix-ui`, `lucide-react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`, `@fontsource-variable/manrope`, and `@fontsource/ibm-plex-mono`. Configure Tailwind 4 with `@tailwindcss/postcss`; the example includes the exact tested dependencies and configuration. Map `@/*` to the directory containing `components`, `lib`, and `app` in both TypeScript and your bundler.
+Install `radix-ui`, `lucide-react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`, `@fontsource-variable/geist`, and `@fontsource-variable/inter`. Configure Tailwind 4 with `@tailwindcss/postcss`; the example includes the exact tested dependencies and configuration. Map `@/*` to the directory containing `components`, `lib`, and `app` in both TypeScript and your bundler.
 
 Import `app/globals.css` once from your application entry and import the two font packages as shown in `examples/header-vite/main.tsx`. The stylesheet includes global Azure Glass tokens, resets, and primitive styling; merge deliberately if your app already defines a theme. Do not import Tailwind twice. Ensure Tailwind scans the copied component sources. Add `.dark` to `<html>` to select the dark palette; light is the default. OS reduced motion is automatic; `data-motion="reduced"` on `<html>` forces it, including portaled menus.
 
