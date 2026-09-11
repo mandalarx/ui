@@ -4,15 +4,14 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { MotionProvider } from "@/components/motion-provider"
 
-import "@fontsource-variable/manrope"
-import "@fontsource/ibm-plex-mono/400.css"
-import "@fontsource/ibm-plex-mono/500.css"
-import "@fontsource/ibm-plex-mono/600.css"
+import "@fontsource-variable/geist"
+import "@fontsource-variable/inter"
+import "@fontsource-variable/geist-mono"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Mandalar UI",
-  description: "The azure and glass component system built on shadcn/ui.",
+  title: "MandalarX UI",
+  description: "Flat, ruled azure components built on shadcn/ui.",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

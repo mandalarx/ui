@@ -7,10 +7,9 @@ import { MotionProvider } from "../components/motion-provider"
 import { TooltipProvider } from "../components/ui/tooltip"
 import { atelierTheme } from "./atelier-theme"
 
-import "@fontsource-variable/manrope"
-import "@fontsource/ibm-plex-mono/400.css"
-import "@fontsource/ibm-plex-mono/500.css"
-import "@fontsource/ibm-plex-mono/600.css"
+import "@fontsource-variable/geist"
+import "@fontsource-variable/inter"
+import "@fontsource-variable/geist-mono"
 import "../app/globals.css"
 import "../components/effects/effects.css"
 
