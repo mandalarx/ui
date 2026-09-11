@@ -101,6 +101,7 @@ There is no separate rule color. Rules, card borders, and cell dividers all use 
 | :-- | :-- | :-- | :-- |
 | `--primary` | `#0069e8` Azure | `#58b4ff` | The action color: primary buttons, focus ring, selection, active indicators, links |
 | `--accent` / `--accent-foreground` | `#deefff` / `#0052b8` | `#123b60` / `#b8e2ff` | Hover and current-item fills |
+| `--signature-fill` / `--signature-fill-foreground` | `#10243b` / `#ffffff` | `#0d1d30` / `#e8f3ff` | The ink chip inside the signature ring. Dark in both themes, so the ring reads against it |
 | `--destructive`, `--success`, `--warning`, `--info` | OKLCH | OKLCH | Status only, never decoration |
 
 ### Light sources
@@ -202,8 +203,8 @@ Tailwind's `shadow-2xs`, `shadow-xs`, and `shadow-sm` resolve to nothing: small 
 
 ### Brand texture
 
-- **Signature ring.** The one main action on a view can use `variant="signature"`: a `--background` fill inside a 3px ring of Azure running into Glacier under a fine grain. The ring is static. On hover it brightens and swells slightly on the pop spring. Use it once per view; ordinary primary actions use the flat `default` variant.
-- **Frost grain (`--frost-grain`).** A static noise texture at about 2% opacity. It lives only in the signature ring and in brand panels, where it keeps the gradients from banding.
+- **Signature ring.** The one main action on a view can use `variant="signature"`: an ink chip (`--signature-fill`, white label) inside a 3px ring of Azure running into Glacier, with bright filaments (`--signature-streaks`) running diagonally through it. One texture serves both themes: it is white, and the gradient beneath supplies the color. The ring's background is half again as large as the ring, and it drifts across itself over 16 seconds, so the filaments move like light on water. On hover it brightens to 130% and thickens: the ring grows a little while the chip shrinks a little, and the button itself stays exactly where it is. Use it once per view; ordinary primary actions use the flat `default` variant.
+- **Frost grain (`--frost-grain`).** A static noise texture at about 2% opacity. It lives only in the brand panels, where it keeps the gradients from banding.
 
 ---
 
@@ -260,7 +261,7 @@ Left-align text inside cells and heroes. Center only section intros.
 | `--ease-enter` | `cubic-bezier(.16, 1, .3, 1)` | Things arriving: fast out of the gate, long gentle landing |
 | `--ease-exit` | `cubic-bezier(.4, 0, 1, 1)` | Things leaving: accelerate away, no lingering |
 | `--ease-settle` | `linear()` spring (420 / 32 / .8) | Surfaces and indicators. 0.3% overshoot, rests in about 330ms |
-| `--ease-spring` | `cubic-bezier(.22, 1.18, .36, 1)` | Pop: small controls only, such as thumbs, checks, press release, and the signature ring |
+| `--ease-spring` | `cubic-bezier(.22, 1.18, .36, 1)` | Pop: small controls only, such as thumbs, checks, and press release |
 | linear | `linear` | Light. Light never eases or bounces |
 
 `--ease-settle` is the same spring as the `atelierSpring` export that drives JavaScript motion, sampled into a CSS `linear()` curve. CSS and JS motion share one feel. Browsers without `linear()` fall back to `--ease-enter`.
@@ -279,7 +280,7 @@ Left-align text inside cells and heroes. Center only section intros.
 
 | Primitive | Motion |
 | :-- | :-- |
-| Button | Fill and border color change on hover; nothing lifts. Presses to .97 on the pop spring. An outline button fills with the foreground color on hover. The signature ring brightens and swells slightly |
+| Button | Fill and border color change on hover; nothing lifts. Presses to .97 on the pop spring. An outline button fills with the foreground color on hover. The signature ring drifts over 16s, and brightens and thickens on hover while the button box stays put |
 | Focus ring | Blooms from 0 to 3px on the pop spring. Keyboard focus only |
 | Menus, popovers, select, tooltip | Scale .96 to 1 from the trigger on `--ease-settle`; items stagger in. Exit: fade and scale to .98 on `--ease-exit` |
 | Dialog | Rises 8px and scales .97 to 1 on `--ease-settle`. Exit: fast fade. Scrim fades opacity only |
@@ -314,7 +315,7 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 
 ## Accessibility
 
-- **Reduced motion.** The operating system preference and the `data-motion="reduced"` override are both honored, in CSS and JS. Under reduced motion, durations collapse to near zero and every decorative effect stops at a static, composed frame: caustics hold still, pointer light rests at the top edge, the rim glint is skipped, reveals show content immediately, number roll swaps digits, and theme changes are instant. The signature ring stays: it is a static texture, not motion. Each effect has explicit rules in both escape hatches, because a blanket duration override does not neutralize persistent transforms.
+- **Reduced motion.** The operating system preference and the `data-motion="reduced"` override are both honored, in CSS and JS. Under reduced motion, durations collapse to near zero and every decorative effect stops at a static, composed frame: caustics hold still, pointer light rests at the top edge, the rim glint is skipped, reveals show content immediately, number roll swaps digits, and theme changes are instant. The signature ring stops drifting and keeps its texture, so the button still reads as the signature action. Each effect has explicit rules in both escape hatches, because a blanket duration override does not neutralize persistent transforms.
 - **Contrast.** WCAG AA in both themes, checked by axe on every Storybook story. Text never sits on a gradient. Text on a caustic panel sits on the quiet side of its `fade` and uses `--foreground`: muted text on the pale light-mode pool measures about 4.4:1, just short of AA, while foreground text holds well above 4.5:1 even at full pattern strength.
 - **Decoration is silent.** Effect layers are `aria-hidden`. Animated values have a plain-text equivalent for assistive technology.
 - **Focus is always visible.** A 3px Azure ring blooms around a control on keyboard focus. Flat does not mean ringless: every surface rule that sets a shadow keeps a slot for the ring.
@@ -322,10 +323,10 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 
 ## Performance budget
 
-- Animate only `transform`, `opacity`, CSS custom properties, a one-shot `filter` for Reveal, and the signature ring's hover brightness.
+- Animate only `transform`, `opacity`, CSS custom properties, a one-shot `filter` for Reveal, and the signature ring's hover brightness. The ring's 16s `background-position` drift is the one paint animation in the system, and it is confined to one small element.
 - No `backdrop-filter`. Surfaces are opaque, so nothing needs to blur what is behind it.
-- The signature ring and the grain are static images; they never animate at rest.
-- At most one infinite animation on screen, not counting spinners, loading progress, and skeletons.
+- The grain and the ring's filaments are static images; only the ring's position drifts.
+- At most one infinite animation on screen, not counting spinners, loading progress, skeletons, and the signature ring's drift.
 - Ambient effects pause when off-screen or when the tab is hidden.
 - No per-frame JavaScript for ambient effects. Pointer tracking writes CSS variables at most once per animation frame, and only for fine pointers.
 

@@ -49,7 +49,7 @@ The `atelier` CSS layer follows Tailwind utilities so upstream styles cannot ove
 
 Every surface is opaque with a 1px `--border`, and nothing uses a backdrop blur. Cards, alerts, inputs, and buttons cast no shadow; menus and popovers use `--shadow-pop`, and dialogs, sheets, and drawers use `--shadow-overlay`. `data-surface="glass"` from Azure Glass still works and renders as a flat card.
 
-`<Button variant="signature">` draws a static Azure-to-Glacier ring around a quiet fill, for the one main action on a view. Outline buttons fill with the foreground color on hover.
+`<Button variant="signature">` draws a filamented Azure-to-Glacier ring, drifting over 16 seconds, around an ink chip, for the one main action on a view. On hover it brightens and thickens without moving the button. Outline buttons fill with the foreground color on hover.
 
 ### Composition
 
@@ -61,7 +61,7 @@ Import `@fontsource-variable/geist`, `@fontsource-variable/inter`, and `@fontsou
 
 ### Stability
 
-The internal `atelier` layer, `atelierSpring` export, `atelier-theme` preference key, and `azure-*` class prefix remain stable for existing consumers. `--glass-highlight` remains as an alias for `--light-cool`. `useMotionPreference()` resolves the provider and OS settings for custom gestures. Ambient light and custom motion stop under reduced motion; the signature ring stays, because it is a static texture.
+The internal `atelier` layer, `atelierSpring` export, `atelier-theme` preference key, and `azure-*` class prefix remain stable for existing consumers. `--glass-highlight` remains as an alias for `--light-cool`. `useMotionPreference()` resolves the provider and OS settings for custom gestures. Ambient light and custom motion stop under reduced motion; the signature ring stops drifting but keeps its texture.
 
 ### Motion
 

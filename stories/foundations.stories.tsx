@@ -309,9 +309,12 @@ type Story = StoryObj<typeof meta>
 export const System: Story = {
   play: async ({ canvasElement }) => {
     // Let the headline finish its entrance before accessibility checks read its contrast.
+    // The signature ring's drift is infinite and never settles, so entrances are the ones that count.
     const reveal = canvasElement.querySelector<HTMLElement>('[data-slot="reveal"]')!
+    const entrances = () => reveal.getAnimations({ subtree: true })
+      .filter(animation => animation.playState === "running" && animation.effect?.getComputedTiming().iterations !== Infinity)
     await waitFor(() => expect(reveal.dataset.revealState).not.toBe("pending"))
-    await waitFor(() => expect(reveal.getAnimations({ subtree: true }).filter(animation => animation.playState === "running")).toHaveLength(0), { timeout: 3000 })
+    await waitFor(() => expect(entrances()).toHaveLength(0), { timeout: 3000 })
   },
 }
 export const Motion: Story = { render: () => <MotionReference /> }
