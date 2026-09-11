@@ -12,6 +12,7 @@
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build -o out",
     "test:storybook": "vitest --project=storybook",
+    "test:header": "node scripts/verify-header.mjs",
     "test:visual": "node scripts/verify-workbench.mjs",
     "stories:generate": "node scripts/generate-component-stories.mjs",
     "registry:sync": "node scripts/sync-shadcn-registry.mjs",
