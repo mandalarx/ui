@@ -54,7 +54,7 @@ const items: HeaderNavItem[] = [
 
 Supply real destinations in your app. This component never guesses routes or authentication state. Use unique item IDs; groups contain direct links, not nested groups. Keep branding non-interactive because it is wrapped in a link. Icons are decorative; labels carry the accessible name.
 
-`HeaderProps` also accepts `sticky` (default `true`), `className`, `navigationLabel`, `menuButtonLabel`, and `menuTitle`. Actions use `variant: "primary" | "secondary"` (primary by default). Links support `target` and `rel`. `activeHref` uses exact string matching, sets `aria-current="page"`, and highlights the containing group. Supply an empty array for `items` or omit `actions` for a minimal header. Sticky behavior requires a scrolling ancestor and can be affected by ancestor overflow; keep the header near the app root.
+`HeaderProps` also accepts `sticky` (default `true`), `className`, `navigationLabel`, `menuButtonLabel`, and `menuTitle`. Actions use `variant: "primary" | "secondary"` (primary by default). Primary renders the flat Azure button; secondary renders the outline button, which fills with the foreground color on hover. The header does not use the signature ring, because a page's one signature action belongs to its content. Links support `target` and `rel`. `activeHref` uses exact string matching, sets `aria-current="page"`, and highlights the containing group. Supply an empty array for `items` or omit `actions` for a minimal header. Sticky behavior requires a scrolling ancestor and can be affected by ancestor overflow; keep the header near the app root.
 
 ## Router integration
 

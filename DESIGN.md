@@ -196,7 +196,9 @@ Radius is small and consistent. A corner tells you what kind of thing you are lo
 | 4px (`--radius-sm`) | Inline code, kbd, checkboxes, badges |
 | 6px | Menu items, tab triggers, tooltips, extra-small buttons |
 | 8px (`--radius`) | Buttons, inputs, selects, cards, alerts, code blocks, menus, popovers |
-| 12px (`--radius-xl`) | Dialogs, alert dialogs, the top edge of drawers |
+| 12px (`--radius-xl`) | Dialogs, alert dialogs, the top edge of drawers. Tailwind's `rounded-2xl` and `rounded-3xl` also resolve to 12px, so blocks never exceed it |
+
+Tailwind's `shadow-2xs`, `shadow-xs`, and `shadow-sm` resolve to nothing: small shadows are the job of borders. Larger shadow utilities are left for floating layers.
 
 ### Brand texture
 
