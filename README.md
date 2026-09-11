@@ -2,6 +2,8 @@
 
 A Storybook-first collection of shadcn/ui components and blocks, styled as **Azure Glass**. Icy and midnight surfaces, clear azure actions, selective glass, Manrope typography, IBM Plex Mono for data, and fluid motion. This is a reusable UI library, not a product application.
 
+The design language, including its tokens, surfaces, motion rules, and expressive layer, is specified in [DESIGN.md](DESIGN.md).
+
 ## Run the workbench
 
 ```bash
