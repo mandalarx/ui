@@ -17,12 +17,12 @@ const meta = {
   title: "Components/Header", component: Header, tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
   args: {
-    brand: <><span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground"><Layers className="size-5" /></span>Mandalar</>,
+    brand: <><span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><Layers className="size-5" /></span>Mandalar</>,
     brandHref: "#overview", brandLabel: "Mandalar home", items, activeHref: "#design",
     actions: [{ id: "login", label: "Sign in", href: "#signin", variant: "secondary" }, { id: "start", label: "Get started", href: "#start" }],
   },
   decorators: [(Story) => <div className="flow-root"><Story /><main className="mx-auto max-w-5xl px-6 pb-24">
-    <section id="overview" className="azure-hero relative my-12 overflow-hidden rounded-3xl border px-8 py-20 sm:px-16"><p className="relative z-10 mb-5 text-sm text-primary">MANDALAR STUDIO</p><h1 className="relative z-10 max-w-xl text-4xl font-semibold tracking-tight sm:text-6xl">Make room for your next idea.</h1><p className="relative z-10 mt-6 max-w-md text-lg text-muted-foreground">A shared space for thoughtful design, useful tools, and things worth building.</p></section>
+    <section id="overview" className="py-20 sm:py-28"><h1 className="max-w-2xl text-display">Make room for your next idea.</h1><p className="mt-6 max-w-md text-lg leading-7 text-muted-foreground">A shared space for thoughtful design, useful tools, and things worth building.</p></section>
     {["design", "motion", "resources", "pricing", "signin", "start"].map(id => <section key={id} id={id} className="min-h-64 scroll-mt-32 border-t py-12"><h2 className="text-2xl font-semibold capitalize">{id === "signin" ? "Sign in" : id === "start" ? "Get started" : id}</h2><p className="mt-4 text-muted-foreground">Example destination for the header navigation.</p></section>)}
   </main></div>],
 } satisfies Meta<typeof Header>

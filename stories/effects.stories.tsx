@@ -13,25 +13,25 @@ import { NumberRoll } from "@/components/effects/number-roll"
 import { startThemeTransition } from "@/components/effects/theme-transition"
 
 function CausticsSpecimen({ intensity = .6, tint = "cool" }: Pick<CausticsProps, "intensity" | "tint">) {
-  return <section className="relative isolate overflow-hidden rounded-[28px] border px-6 py-16 sm:px-12 sm:py-24">
+  return <section className="relative isolate overflow-hidden border px-6 py-16 sm:px-12 sm:py-24">
     <Caustics intensity={intensity} tint={tint} fade="left" />
     <div className="max-w-md">
-      <h1 className="text-display">Light through ice.</h1>
-      <p className="mt-6 leading-7 text-foreground">Sunlight moving through water. Use it once per view, behind the surface people see first, and keep text on the quiet side.</p>
+      <h1 className="text-display">One field of light.</h1>
+      <p className="mt-6 leading-7 text-foreground">Sunlight moving through water. Use it once per view, as the brand panel people see first, and keep text on the quiet side.</p>
     </div>
   </section>
 }
 
 function PointerLightSpecimen() {
   const light = usePointerLight<HTMLDivElement>()
-  return <section className="azure-surface-stage grid min-h-[28rem] place-items-center rounded-[28px] border p-6 sm:p-10">
-    <Card ref={light} data-surface="glass" data-light="follow" data-testid="lit-card" className="w-full max-w-md">
+  return <section className="grid min-h-[28rem] place-items-center border bg-muted/50 p-6 sm:p-10">
+    <Card ref={light} data-light="follow" data-testid="lit-card" className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-xl">Move across the glass</CardTitle>
-        <CardDescription>The highlight follows a mouse or pen. Tab into the card to send a glint around its rim.</CardDescription>
+        <CardTitle className="text-xl">Move across the card</CardTitle>
+        <CardDescription>The highlight follows a mouse or pen, and the border brightens nearest it. Tab into the card to send a glint around its border.</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-3">
-        <Input aria-label="Collection name" defaultValue="Azure Glass" />
+        <Input aria-label="Collection name" defaultValue="Azure Blueprint" />
         <Button>Save</Button>
       </CardContent>
     </Card>

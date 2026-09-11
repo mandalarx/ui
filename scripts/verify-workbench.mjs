@@ -48,14 +48,25 @@ try {
       await page.getByRole("button", { name: "Complete", exact: true }).click()
       assert.equal(await page.getByRole("slider").getAttribute("aria-valuenow"), "100")
       await page.screenshot({ path: `artifacts/visual/${device}-${theme}.png`, fullPage: true, animations: "disabled" })
-      // Flat and ruled: every card is opaque, unblurred, 8px, and casts no shadow.
-      for (const id of ["surface-solid", "surface-glass"]) {
-        const card = page.getByTestId(id)
-        assert.deepEqual(await surfaceStyle(card), { alpha: 255, blur: "none", radius: "8px" }, `${id} must be flat`)
-        assert.equal(await card.evaluate(el => getComputedStyle(el).boxShadow), "none", `${id} must not cast a shadow`)
+      // Flat and ruled: cells are square, cards are 8px; both are opaque, unblurred, and cast no shadow.
+      for (const [id, radius] of [["surface-cell", "0px"], ["surface-card", "8px"]]) {
+        const surface = page.getByTestId(id)
+        assert.deepEqual(await surfaceStyle(surface), { alpha: 255, blur: "none", radius }, `${id} must be flat`)
+        assert.equal(await surface.evaluate(el => getComputedStyle(el).boxShadow), "none", `${id} must not cast a shadow`)
       }
-      assert.equal(await page.getByRole("textbox", { name: "Glass collection" }).evaluate(el => getComputedStyle(el).borderRadius), "8px")
-      assert.equal((await surfaceStyle(page.getByRole("textbox", { name: "Glass collection" }))).alpha, 255, "Inputs must stay opaque")
+      const input = page.getByRole("textbox", { name: "Collection name" })
+      assert.equal(await input.evaluate(el => getComputedStyle(el).borderRadius), "8px")
+      assert.equal((await surfaceStyle(input)).alpha, 255, "Inputs must stay opaque")
+      // Bands draw ticks where their rule meets the rails, and only one brand panel moves.
+      assert.match(await page.locator(".azure-band").first().evaluate(el => getComputedStyle(el, "::before").backgroundImage), /linear-gradient/, "Band ticks must render")
+      assert.equal(await page.locator('[data-slot="caustics"]').evaluateAll(panels => panels.filter(panel => getComputedStyle(panel, "::before").animationName !== "none").length), 1, "Exactly one moving brand panel per view")
+      // The signature ring is a static image that brightens on hover.
+      const signature = page.getByRole("link", { name: "Browse components" })
+      assert.match(await signature.evaluate(el => getComputedStyle(el, "::before").backgroundImage), /linear-gradient/, "Signature ring must render")
+      assert.equal(await signature.evaluate(el => getComputedStyle(el, "::before").animationName), "none", "Signature ring must not animate at rest")
+      await signature.hover()
+      await page.waitForFunction(() => getComputedStyle(document.querySelector('[data-variant="signature"]'), "::before").filter.includes("brightness"))
+      await page.mouse.move(0, 0)
       const primaryButton = page.getByRole("button", { name: "Complete", exact: true })
       await primaryButton.hover()
       assert.equal(await primaryButton.evaluate(el => getComputedStyle(el).translate), "none", "Buttons must not lift on hover")
@@ -99,7 +110,7 @@ try {
       await page.waitForFunction(() => document.querySelector('[data-testid="lit-card"]').hasAttribute("data-lit"))
       await page.screenshot({ path: `artifacts/visual/effects-pointer-${device}-${theme}.png`, animations: "disabled" })
       await page.goto(`${base}/iframe.html?id=foundations-effects--caustics-surface&viewMode=story`)
-      await page.getByRole("heading", { name: "Light through ice." }).waitFor()
+      await page.getByRole("heading", { name: "One field of light." }).waitFor()
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Caustics overflow: ${device} ${theme}`)
       await page.screenshot({ path: `artifacts/visual/effects-caustics-${device}-${theme}.png`, animations: "disabled" })
       await page.emulateMedia({ reducedMotion: "reduce" })
