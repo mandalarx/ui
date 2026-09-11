@@ -4,6 +4,12 @@
    components layer, so a positioning utility on the same element still wins. */
 @layer components {
   :where([data-light="follow"]) { position: relative; isolation: isolate; }
+  /* Caustics fade away toward one side so text there stays on a quiet ground.
+     A mask utility on the same element can refine this, for example per breakpoint. */
+  .azure-caustics[data-fade="left"] { mask-image: linear-gradient(to right, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="right"] { mask-image: linear-gradient(to left, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="top"] { mask-image: linear-gradient(to bottom, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="bottom"] { mask-image: linear-gradient(to top, transparent 10%, #000 70%); }
 }
 
 @property --rim-angle { syntax: "<angle>"; inherits: false; initial-value: 0turn; }
@@ -38,11 +44,6 @@
     background: var(--caustic-ground);
   }
   .azure-caustics[data-tint="sunlit"] { --caustic-line: color-mix(in oklab, var(--light-warm) 15%, var(--caustic-cool)); }
-  /* The pattern fades away toward one side so text there stays on a quiet ground. */
-  .azure-caustics[data-fade="left"] { mask-image: linear-gradient(to right, transparent 10%, #000 70%); }
-  .azure-caustics[data-fade="right"] { mask-image: linear-gradient(to left, transparent 10%, #000 70%); }
-  .azure-caustics[data-fade="top"] { mask-image: linear-gradient(to bottom, transparent 10%, #000 70%); }
-  .azure-caustics[data-fade="bottom"] { mask-image: linear-gradient(to top, transparent 10%, #000 70%); }
   .azure-caustics::before, .azure-caustics::after {
     content: ""; position: absolute; inset: -30%;
     background: var(--caustic-line);

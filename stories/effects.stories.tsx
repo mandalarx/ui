@@ -17,7 +17,7 @@ function CausticsSpecimen({ intensity = .6, tint = "cool" }: Pick<CausticsProps,
     <Caustics intensity={intensity} tint={tint} fade="left" />
     <div className="max-w-md">
       <h1 className="text-display">Light through ice.</h1>
-      <p className="mt-6 leading-7 text-muted-foreground">Sunlight moving through water. Use it once per view, behind the surface people see first, and keep text on the quiet side.</p>
+      <p className="mt-6 leading-7 text-foreground">Sunlight moving through water. Use it once per view, behind the surface people see first, and keep text on the quiet side.</p>
     </div>
   </section>
 }
