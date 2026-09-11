@@ -1,4 +1,4 @@
-# Mandalar UI
+# MandalarX UI
 
 A Storybook-first collection of shadcn/ui components and blocks, styled as **Azure Glass**. Icy and midnight surfaces, clear azure actions, selective glass, Manrope typography, IBM Plex Mono for data, and fluid motion. This is a reusable UI library, not a product application.
 
