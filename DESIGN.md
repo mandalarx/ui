@@ -141,7 +141,7 @@ Three voices, each with one job.
 | Body | 16px | Inter 400 | 0 | 1.6 |
 | UI | 14px | Inter 500 | 0 | 1.45 |
 | Caption | 12px | Inter 500 | 0 | 1.4 |
-| Micro-label | 12px | Geist Mono 500, uppercase | 0.06em | 1.4 |
+| Micro-label (`text-micro`) | 12px | Geist Mono 500, uppercase | 0.06em | 1.4 |
 
 **Headlines are tight and medium.** Display and section headings use weight 500 with strong negative tracking, so large lines read as one shape. Document headings (H1–H3) step up to 600 at smaller sizes. In long documents, an H2 opens a new part: give it a 1px rule above and 24px of space before the text.
 
@@ -223,9 +223,11 @@ A page is a drawing: a frame, bands inside it, and cells inside the bands.
 ┼──────────────────────────┴──────────────────────────┼
 ```
 
-- **Frame (`azure-frame`).** Centered, at most 1440px wide, with 1px rails on both sides. Rails appear only when there is room beside them.
+- **Frame (`azure-frame`).** Centered, at most 1440px wide, with 1px rails on both sides. On narrow screens a 12px gutter keeps the rails and their ticks inside the viewport.
 - **Band (`azure-band`).** A full-width section with a rule on top. Where the rule meets a rail, a 10px tick crosses it, so the page reads as measured.
-- **Cells (`azure-cells`).** A flush grid separated by 1px rules at every breakpoint. Media fills its cell to the rules; text sits inside 24–40px of padding.
+- **Cells (`azure-cells`).** A flush grid separated by 1px rules at every breakpoint. Media fills its cell to the rules; text sits inside 24–40px of padding. Fill complete rows: an empty slot shows as a block of rule color.
+
+The composition classes live in the components layer, so a utility on the same element (a cell background, a padding) still wins.
 - **Section intro (`azure-section-intro`).** A centered section heading and one muted line, with generous space above and below.
 - **Brand panel.** `Caustics` fills a cell or a whole band. It is the view's one field of light.
 
