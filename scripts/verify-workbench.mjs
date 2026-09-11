@@ -28,7 +28,7 @@ async function surfaceStyle(locator) {
     const ctx = canvas.getContext("2d")
     ctx.fillStyle = style.backgroundColor
     ctx.fillRect(0, 0, 1, 1)
-    return { alpha: ctx.getImageData(0, 0, 1, 1).data[3], blur: style.backdropFilter, radius: style.borderRadius, blurToken: style.getPropertyValue("--glass-blur") }
+    return { alpha: ctx.getImageData(0, 0, 1, 1).data[3], blur: style.backdropFilter, radius: style.borderRadius }
   })
 }
 try {
@@ -39,50 +39,34 @@ try {
       await page.goto(`${base}/iframe.html?id=foundations-overview--system&viewMode=story`)
       await page.getByRole("heading", { name: "Light. In motion." }).waitFor()
       await page.evaluate(() => document.fonts.ready)
+      assert.match(await page.getByRole("heading", { name: "Light. In motion." }).evaluate(el => getComputedStyle(el).fontFamily), /^"Geist Variable"/)
+      assert.match(await page.locator("body").evaluate(el => getComputedStyle(el).fontFamily), /^"Inter Variable"/)
+      assert(await page.evaluate(() => ["Geist Variable", "Inter Variable"].every(family => [...document.fonts].some(font => font.family.replaceAll('"', "") === family && font.status === "loaded"))), "Geist and Inter must load")
       assert.equal(await page.locator("html").evaluate(el => el.classList.contains("dark")), theme === "dark")
       assert.equal(await page.locator("html").evaluate(el => getComputedStyle(el).getPropertyValue("--primary").trim()), theme === "dark" ? "#58b4ff" : "#0069e8")
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${device} ${theme}: horizontal overflow`)
       await page.getByRole("button", { name: "Complete", exact: true }).click()
       assert.equal(await page.getByRole("slider").getAttribute("aria-valuenow"), "100")
       await page.screenshot({ path: `artifacts/visual/${device}-${theme}.png`, fullPage: true, animations: "disabled" })
-      const solid = await surfaceStyle(page.getByTestId("surface-solid"))
-      const glass = await surfaceStyle(page.getByTestId("surface-glass"))
-      assert.equal(solid.alpha, 255, "Ordinary cards must stay opaque")
-      assert.equal(solid.blur, "none", "Ordinary cards must not blur")
-      assert.equal(glass.radius, "20px")
-      assert(glass.alpha > 210 && glass.alpha < 240 && glass.blur.includes("16px"), `Featured glass must remain dense and translucent: ${JSON.stringify(glass)}`)
-      assert.equal(await page.getByTestId("surface-glass").evaluate(el => getComputedStyle(el).transitionProperty.includes("all")), false, "Glass must not animate backdrop blur")
-      assert.equal(await page.getByRole("textbox", { name: "Glass collection" }).evaluate(el => getComputedStyle(el).borderRadius), "12px")
-      assert.equal((await surfaceStyle(page.getByRole("textbox", { name: "Glass collection" }))).alpha, 255, "Inputs inside glass must stay opaque")
+      // Flat and ruled: every card is opaque, unblurred, 8px, and casts no shadow.
+      for (const id of ["surface-solid", "surface-glass"]) {
+        const card = page.getByTestId(id)
+        assert.deepEqual(await surfaceStyle(card), { alpha: 255, blur: "none", radius: "8px" }, `${id} must be flat`)
+        assert.equal(await card.evaluate(el => getComputedStyle(el).boxShadow), "none", `${id} must not cast a shadow`)
+      }
+      assert.equal(await page.getByRole("textbox", { name: "Glass collection" }).evaluate(el => getComputedStyle(el).borderRadius), "8px")
+      assert.equal((await surfaceStyle(page.getByRole("textbox", { name: "Glass collection" }))).alpha, 255, "Inputs must stay opaque")
       const primaryButton = page.getByRole("button", { name: "Complete", exact: true })
       await primaryButton.hover()
-      assert.equal(await primaryButton.evaluate(el => getComputedStyle(el, "::before").animationName), "azure-sheen")
+      assert.equal(await primaryButton.evaluate(el => getComputedStyle(el).translate), "none", "Buttons must not lift on hover")
       await page.mouse.move(0, 0)
-      await primaryButton.blur()
-      assert.equal(await primaryButton.evaluate(el => getComputedStyle(el, "::before").animationName), "none")
-
-      // Simulate a browser that does not apply the backdrop-filter enhancement.
-      await page.evaluate(() => {
-        function removeEnhancement(group) {
-          for (let i = group.cssRules.length - 1; i >= 0; i--) {
-            const rule = group.cssRules[i]
-            if (rule instanceof CSSSupportsRule && rule.conditionText.includes("backdrop-filter")) group.deleteRule(i)
-            else if (rule.cssRules) removeEnhancement(rule)
-          }
-        }
-        for (const sheet of document.styleSheets) removeEnhancement(sheet)
-      })
-      const fallback = await surfaceStyle(page.getByTestId("surface-glass"))
-      assert.equal(fallback.alpha, 255, "Glass fallback must be opaque")
-      assert.equal(fallback.blur, "none", "Fallback must not require backdrop-filter")
-      if (device === "desktop") await page.screenshot({ path: `artifacts/visual/fallback-${theme}.png`, fullPage: true, animations: "disabled" })
       await page.goto(`${base}/iframe.html?id=components-dialog--states&viewMode=story`)
       await page.getByRole("button", { name: "Edit collection" }).click()
       const dialog = page.getByRole("dialog")
       await dialog.waitFor()
       const bounds = await dialog.boundingBox()
       assert(bounds && bounds.x >= 0 && bounds.x + bounds.width <= width + 1, "Dialog outside viewport")
-      assert.equal(await dialog.evaluate(el => getComputedStyle(el).borderRadius), "24px")
+      assert.equal(await dialog.evaluate(el => getComputedStyle(el).borderRadius), "12px")
       await page.screenshot({ path: `artifacts/visual/dialog-${device}-${theme}.png`, animations: "disabled" })
       await page.keyboard.press("Escape")
       await dialog.waitFor({ state: "hidden" })
@@ -91,13 +75,14 @@ try {
       await dialog.waitFor()
       assert(await dialog.evaluate(el => parseFloat(getComputedStyle(el).animationDuration) < .001), "OS reduced motion ignored")
       await page.keyboard.press("Escape")
-      assert.equal(await page.getByRole("button", { name: "Edit collection" }).evaluate(el => getComputedStyle(el, "::before").display), "none", "OS reduced motion must remove sheen")
+      assert(await page.getByRole("button", { name: "Edit collection" }).evaluate(el => parseFloat(getComputedStyle(el).transitionDuration) < .001), "OS reduced motion must make button transitions instant")
       await page.emulateMedia({ reducedMotion: "no-preference" })
       await page.goto(`${base}/iframe.html?id=components-dropdown-menu--states&viewMode=story`)
       await page.getByRole("button", { name: "Collection actions" }).click()
       const menu = page.getByRole("menu")
       await menu.waitFor()
-      assert.equal(await menu.evaluate(el => getComputedStyle(el).borderRadius), "16px")
+      assert.equal(await menu.evaluate(el => getComputedStyle(el).borderRadius), "8px")
+      assert.equal((await surfaceStyle(menu)).alpha, 255, "Menus must be opaque")
       await page.screenshot({ path: `artifacts/visual/menu-${device}-${theme}.png`, animations: "disabled" })
       await page.goto(`${base}/iframe.html?id=blocks-full-pages--dashboard-01&viewMode=story`)
       await page.getByRole("table").waitFor()
@@ -108,8 +93,7 @@ try {
       await page.goto(`${base}/iframe.html?id=foundations-effects--pointer-light&viewMode=story`)
       const lit = page.getByTestId("lit-card")
       await lit.waitFor()
-      const litGlass = await surfaceStyle(lit)
-      assert(litGlass.alpha > 210 && litGlass.alpha < 240 && litGlass.blur.includes("16px") && litGlass.radius === "20px", `Pointer light must not change glass: ${JSON.stringify(litGlass)}`)
+      assert.deepEqual(await surfaceStyle(lit), { alpha: 255, blur: "none", radius: "8px" }, "Pointer light must not change the card")
       const litBox = await lit.boundingBox()
       await page.mouse.move(litBox.x + litBox.width * .3, litBox.y + 8)
       await page.waitForFunction(() => document.querySelector('[data-testid="lit-card"]').hasAttribute("data-lit"))
@@ -135,7 +119,7 @@ try {
         await page.waitForFunction(() => getComputedStyle(document.querySelector('[data-testid="motion-sample"]')).transform === "none")
       }
       await page.close()
-      console.log(`Verified ${device} / ${theme}: glass, fallback, controls, overlays, dashboard, reduced motion`)
+      console.log(`Verified ${device} / ${theme}: type, flat surfaces, controls, overlays, dashboard, reduced motion`)
     }
   }
   const manager = await browser.newPage({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" })

@@ -53,7 +53,7 @@
   --chart-3: oklch(0.68 0.16 65);
   --chart-4: oklch(0.61 0.18 332);
   --chart-5: oklch(0.56 0.14 237);
-  --radius: .75rem;
+  --radius: .5rem;
   --sidebar: #eaf3ff;
   --sidebar-foreground: #203e5f;
   --sidebar-primary: #0069e8;
@@ -139,49 +139,41 @@
   --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border); --color-sidebar-ring: var(--sidebar-ring);
-  --radius-sm: 0.375rem; --radius-md: var(--radius);
-  --radius-lg: 1rem; --radius-xl: 1.25rem;
+  --radius-sm: .25rem; --radius-md: var(--radius);
+  --radius-lg: var(--radius); --radius-xl: .75rem;
+  --radius-2xl: .75rem; --radius-3xl: .75rem;
+  /* Flat: rules do the work small shadows used to do. */
+  --shadow-2xs: 0 0 #0000; --shadow-xs: 0 0 #0000; --shadow-sm: 0 0 #0000;
   --font-heading: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, monospace;
 }
 
-/* Azure Glass: shared primitive slots keep every block on the same system. */
+/* Azure Blueprint: shared primitive slots keep every block on the same system. */
 :root {
   --ease-spring: cubic-bezier(.22, 1.18, .36, 1);
-  --surface-shadow: 0 2px 4px oklch(.2 .03 250 / .025), 0 12px 32px -16px oklch(.2 .03 250 / .16);
-  --overlay-shadow: 0 8px 16px -8px oklch(.2 .04 250 / .12), 0 28px 80px -20px oklch(.2 .04 250 / .24);
-  --surface-highlight: oklch(1 0 0 / .9);
-  --glass-rim: #ffffff;
-  --glass-tint: 86%;
-  --glass-blur: 16px;
-  --glass-highlight: #57def3;
-  --button-sheen: #ffffff0a;
-  --glass-shadow: 0 8px 24px -12px #0069e830, 0 32px 72px -32px #164b8a38;
+  /* Only floating layers cast a shadow, tinted blue in light mode. */
+  --shadow-pop: 0 4px 12px oklch(.25 .06 250 / .08);
+  --shadow-overlay: 0 24px 64px -16px oklch(.2 .06 250 / .24);
+  --shimmer: oklch(1 0 0 / .6);
   /* Light sources: never text, fills, or borders. Sunlit stays at or below 15% alpha. */
+  --light-cool: #57def3;
   --light-warm: #fff3d6;
-  /* Light leaves glass at the far edge; a faint Glacier line opposite the entering rim. */
-  --glass-edge: #57def347;
+  /* Static grain for the signature ring and brand panels. */
   --frost-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .06 0 0 0 0 .14 0 0 0 0 .23 .14 0 0 0 -.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 .dark {
-  --surface-shadow: 0 2px 4px oklch(0 0 0 / .16), 0 16px 40px -16px oklch(0 0 0 / .4);
-  --overlay-shadow: 0 8px 20px -8px oklch(0 0 0 / .4), 0 32px 88px -16px oklch(0 0 0 / .6);
-  --surface-highlight: oklch(1 0 0 / .1);
-  --glass-rim: #85cfff40;
-  --button-sheen: #ffffff24;
-  --glass-tint: 90%;
-  --glass-shadow: 0 8px 24px -12px #0008, 0 32px 72px -32px #000b, 0 0 40px -28px #57def3;
-  --glass-edge: #57def333;
+  --shadow-pop: 0 4px 12px oklch(0 0 0 / .36);
+  --shadow-overlay: 0 24px 64px -16px oklch(0 0 0 / .64);
+  --shimmer: oklch(1 0 0 / .07);
   --frost-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .93 0 0 0 0 1 .12 0 0 0 -.04'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 /* Aliases resolve wherever a theme class applies, including scoped .dark subtrees. */
 :root, .dark {
-  --elevation-1: var(--surface-shadow);
-  --elevation-2: var(--glass-shadow);
-  --elevation-3: var(--glass-shadow), var(--overlay-shadow);
-  /* Light enters top-left and exits bottom-right. */
-  --glass-rims: inset 0 1px 0 var(--glass-rim), inset 1px 0 0 var(--surface-highlight), inset -1px -1px 0 var(--glass-edge);
+  /* Deprecated: the Azure Glass name for Glacier. */
+  --glass-highlight: var(--light-cool);
+  /* The signature ring: Azure running into Glacier under the grain. A static image. */
+  --signature-ring: var(--frost-grain), linear-gradient(115deg, var(--primary) 25%, var(--light-cool));
   /* Shadow lists that carry a focus ring reserve its slot, so focus blooms from 0 instead of snapping. */
   --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 45%, transparent);
   --focus-ring-rest: 0 0 0 0 transparent;
@@ -192,46 +184,55 @@
     transition-timing-function: var(--ease-standard);
     transition-duration: var(--motion-base);
   }
-  :where([data-slot="card"], [data-slot="item"][data-variant="outline"], [data-slot="empty"], [data-slot="alert"]) {
-    border-radius: 1.25rem;
-    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--elevation-1);
+  /* Flat and ruled: opaque, a hairline border, no shadow. data-surface="glass" is a legacy alias. */
+  :where([data-slot="card"], [data-slot="item"][data-variant="outline"], [data-slot="empty"], [data-slot="alert"], [data-surface="glass"]) {
+    border-radius: var(--radius);
+    box-shadow: none;
     background-color: var(--card);
   }
+  :where([data-surface="glass"]) { border: 1px solid var(--border); }
   :where([data-ui-button], [data-slot="toggle"], [data-slot="sidebar-menu-button"]) {
-    transition-property: background-color, color, box-shadow, border-color, translate, scale;
+    transition-property: background-color, color, box-shadow, border-color, scale;
     transition-timing-function: var(--ease-spring);
     transition-duration: 260ms;
   }
-  :where([data-ui-button][data-variant="default"]) {
-    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring-rest), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
-    background-image: linear-gradient(180deg, #ffffff04, transparent);
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+  /* Buttons are flat: no sheen, no lift, no shadow. The ring slot lets focus bloom from 0. */
+  :where([data-ui-button]) { box-shadow: var(--focus-ring-rest); }
+  :where([data-ui-button]):focus-visible { box-shadow: var(--focus-ring); }
+  :where([data-ui-button][data-variant="outline"]) { background-color: transparent; border-color: var(--input); }
+  /* Signature: a static textured ring (::before) around a quiet fill (::after). Once per view. */
+  :where([data-ui-button][data-variant="signature"]) { position: relative; isolation: isolate; background-color: transparent; }
+  :where([data-ui-button][data-variant="signature"])::before,
+  :where([data-ui-button][data-variant="signature"])::after { content: ""; position: absolute; pointer-events: none; }
+  :where([data-ui-button][data-variant="signature"])::before {
+    inset: -3px; z-index: -2; border-radius: calc(var(--radius) + 3px);
+    background: var(--signature-ring);
+    transition: filter var(--motion-base) var(--ease-standard), scale 260ms var(--ease-spring);
   }
-  :where([data-ui-button][data-variant="default"]):focus-visible {
-    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
-  }
+  :where([data-ui-button][data-variant="signature"])::after { inset: 0; z-index: -1; border-radius: inherit; background: var(--background); }
+  /* The focus ring clears the brand ring. */
+  :where([data-ui-button][data-variant="signature"]):focus-visible { box-shadow: 0 0 0 6px color-mix(in oklab, var(--ring) 45%, transparent); }
   :where([data-ui-button], [data-slot="toggle"]):active:not(:disabled):not([aria-disabled="true"]) { scale: .97; }
   :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="input-group"], [data-slot="combobox-input"]) {
     border-radius: var(--radius);
-    background-color: color-mix(in oklab, var(--card) 75%, var(--background));
-    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), var(--focus-ring-rest);
+    background-color: var(--background);
+    box-shadow: var(--focus-ring-rest);
     transition-property: border-color, box-shadow, background-color;
     transition-duration: 260ms;
     transition-timing-function: var(--ease-spring);
   }
   :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="combobox-input"]):focus-visible,
   :where([data-slot="input-group"]):has(:focus-visible) {
-    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), var(--focus-ring);
+    box-shadow: var(--focus-ring);
   }
   :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="combobox-input"])[aria-invalid="true"],
   :where([data-slot="input-group"]):has([aria-invalid="true"]) {
-    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), 0 0 0 3px color-mix(in oklab, var(--destructive) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 22%, transparent);
   }
   :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
-    border-radius: 1.5rem;
-    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
+    border-radius: .75rem;
+    background-color: var(--popover);
+    box-shadow: var(--shadow-overlay);
     /* Dialogs rise a few pixels and settle; they leave with a quick fade. */
     --tw-enter-scale: .97;
     --tw-enter-translate-y: .5rem;
@@ -239,17 +240,18 @@
     animation-duration: var(--motion-slow);
     animation-timing-function: var(--ease-settle);
   }
-  :where([data-slot="sheet-content"], [data-slot="drawer-content"]) { animation-duration: 380ms; animation-timing-function: var(--ease-enter); }
+  :where([data-slot="sheet-content"], [data-slot="drawer-content"]) { background-color: var(--popover); box-shadow: var(--shadow-overlay); animation-duration: 380ms; animation-timing-function: var(--ease-enter); }
+  :where([data-slot="drawer-content"][data-vaul-drawer-direction="bottom"]) { border-top-left-radius: .75rem; border-top-right-radius: .75rem; }
+  /* The scrim dims without blurring: surfaces are opaque, so nothing needs a backdrop filter. */
   :where([data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"], [data-slot="drawer-overlay"]) {
-    background: oklch(.1 .025 250 / .48);
-    backdrop-filter: blur(5px);
+    background: oklch(.1 .025 250 / .5);
     animation-duration: 240ms;
   }
   /* Menus arrive from their trigger on the settle spring. */
   :where([data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"]) {
-    border-radius: 1rem;
+    border-radius: var(--radius);
     background-color: var(--popover);
-    box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
+    box-shadow: var(--shadow-pop);
     --tw-enter-scale: .96;
     --tw-exit-scale: .98;
     animation-duration: var(--motion-slow);
@@ -257,7 +259,7 @@
   }
   /* Navigation content slides between items in viewport mode; keep its own scale. */
   :where([data-slot="navigation-menu-content"]) { --tw-enter-scale: revert-layer; --tw-exit-scale: revert-layer; }
-  :where([data-slot="tooltip-content"]) { --tw-enter-scale: .96; --tw-exit-scale: .98; animation-duration: var(--motion-base); animation-timing-function: var(--ease-settle); }
+  :where([data-slot="tooltip-content"]) { border-radius: .375rem; --tw-enter-scale: .96; --tw-exit-scale: .98; animation-duration: var(--motion-base); animation-timing-function: var(--ease-settle); }
   /* Everything leaves faster than it came, accelerating away. */
   :where([data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"])[data-state="closed"] {
     animation-duration: var(--motion-exit);
@@ -266,7 +268,7 @@
   :where([data-slot="tooltip-content"])[data-state="closed"] { animation-duration: var(--motion-exit-fast); animation-timing-function: var(--ease-exit); }
   :where([data-slot="sheet-content"])[data-state="closed"] { animation-duration: var(--motion-exit-slow); animation-timing-function: var(--ease-exit); }
   :where([data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"], [data-slot="context-menu-item"], [data-slot="menubar-item"], [data-slot="select-item"], [data-slot="command-item"]) {
-    border-radius: .5rem;
+    border-radius: .375rem;
     transition-property: background-color, color;
     animation: azure-item-in 240ms var(--ease-emphasized) both;
   }
@@ -298,11 +300,11 @@
     animation: azure-glint var(--motion-light) linear infinite;
   }
   :where([data-slot="progress"][data-state="complete"]) { animation: azure-complete 900ms var(--ease-enter); }
-  /* Frost shimmer: the button sheen's light, slower, across loading placeholders. */
+  /* A slow shimmer across loading placeholders. */
   :where([data-slot="skeleton"]) { position: relative; overflow: hidden; isolation: isolate; animation: none; }
   :where([data-slot="skeleton"])::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(110deg, transparent 30%, var(--surface-highlight) 50%, transparent 70%);
+    background: linear-gradient(110deg, transparent 30%, var(--shimmer) 50%, transparent 70%);
     transform: translateX(-100%);
     animation: azure-shimmer var(--motion-light) var(--ease-standard) infinite;
   }
@@ -319,8 +321,8 @@
     width: calc(var(--indicator-right, 0px) - var(--indicator-left, 0px));
     height: calc(var(--indicator-bottom, 0px) - var(--indicator-top, 0px));
     transform: translate(var(--indicator-left, 0px), var(--indicator-top, 0px));
-    border: 1px solid var(--border); border-radius: .5rem;
-    background: var(--card); box-shadow: var(--surface-shadow); opacity: var(--indicator-opacity, 0);
+    border: 1px solid var(--border); border-radius: .375rem;
+    background: var(--card); opacity: var(--indicator-opacity, 0);
     transition: opacity 120ms;
   }
   :where([data-slot="tabs-list"][data-variant="line"])::before {
@@ -331,73 +333,29 @@
   [data-slot="tabs-list"] [data-slot="tabs-trigger"]:focus-visible { box-shadow: var(--focus-ring); }
   [data-slot="tabs-list"] [data-slot="tabs-trigger"]::after { display: none; }
   :where([data-slot="tabs-content"][data-state="active"]) { animation: azure-panel-in 240ms var(--ease-emphasized); }
-  :where([data-slot="sidebar-menu-button"][data-active="true"]) { box-shadow: inset 3px 0 0 var(--primary); }
+  :where([data-slot="sidebar-menu-button"][data-active="true"]) { box-shadow: inset 3px 0 0 var(--primary), var(--focus-ring-rest); }
+  :where([data-slot="sidebar-menu-button"][data-active="true"]):focus-visible { box-shadow: inset 3px 0 0 var(--primary), var(--focus-ring); }
   :where([data-slot="navigation-menu-indicator"]) { transition: width 300ms var(--ease-spring), transform 300ms var(--ease-spring); }
   :where([data-slot="table-row"]) { transition: background-color 160ms; }
   :where([data-slot="chart"]) :is(.recharts-cartesian-axis-tick-value, .recharts-cartesian-axis-tick text) { fill: var(--muted-foreground); }
-  :where([data-slot="badge"]) { border-radius: 999px; }
-  .azure-hero { position: relative; overflow: hidden; isolation: isolate; }
-  .azure-hero::after {
-    content: ""; position: absolute; z-index: -1; pointer-events: none;
-    inset: 15% -10% -35% 42%; border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
-    border-radius: 50%; transform: rotate(-24deg);
-    box-shadow: 0 0 0 26px color-mix(in oklab, var(--primary) 3%, transparent), 0 0 0 52px color-mix(in oklab, var(--glass-highlight) 4%, transparent);
-  }
-  .azure-surface-stage {
-    background: radial-gradient(ellipse at 90% 10%, #57def34d, transparent 60%), repeating-linear-gradient(125deg, #0069e812 0 1px, transparent 1px 26px), var(--accent);
-  }
-  .azure-hero::before {
-    content: ""; position: absolute; z-index: -1; inset: -50%; pointer-events: none;
-    background: radial-gradient(ellipse at 74% 38%, color-mix(in oklab, var(--glass-highlight) 28%, transparent), transparent 32%), radial-gradient(ellipse at 40% 72%, color-mix(in oklab, var(--primary) 20%, transparent), transparent 40%);
-    animation: azure-ambient 12s ease-in-out infinite alternate;
-  }
-  /* Opaque by default; glass is a progressive enhancement on selected surfaces. */
-  :where([data-surface="glass"], [data-slot="sidebar-inner"], [data-slot="sidebar"][data-mobile="true"], [data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) {
-    --surface-opacity: 94%;
-    --surface-base: var(--popover);
-    transition-property: color, border-color, box-shadow;
-    background-color: var(--surface-base);
-    background-image: var(--frost-grain), linear-gradient(135deg, color-mix(in oklab, var(--glass-highlight) 5%, transparent), transparent 45%);
-    border-color: color-mix(in oklab, var(--primary) 18%, var(--border));
-    box-shadow: var(--glass-rims), var(--elevation-2);
-  }
-  :where([data-surface="glass"], [data-slot="sidebar-inner"], [data-slot="sidebar"][data-mobile="true"]) {
-    --surface-opacity: var(--glass-tint);
-    --surface-base: var(--card);
-  }
-  /* Layers with a scrim sit one tier deeper than menus. */
-  :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) {
-    box-shadow: var(--glass-rims), var(--elevation-3);
-  }
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    :where([data-surface="glass"], [data-slot="sidebar-inner"], [data-slot="sidebar"][data-mobile="true"], [data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"], [data-slot="drawer-content"]) {
-      background-color: color-mix(in oklab, var(--surface-base) var(--surface-opacity), transparent);
-      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-      backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    }
-  }
-  :where([data-ui-button][data-variant="default"])::before {
-    content: ""; position: absolute; inset: -30% 0; pointer-events: none;
-    background: linear-gradient(110deg, transparent 30%, var(--button-sheen) 48%, transparent 70%);
-    transform: translateX(-120%);
-  }
-  :where([data-ui-button][data-variant="default"]):is(:hover, :focus-visible):not(:disabled):not([aria-disabled="true"])::before {
-    animation: azure-sheen 560ms var(--ease-emphasized) both;
+  :where([data-slot="badge"]) { border-radius: .25rem; }
+  :where([data-slot="tabs-trigger"]) { border-radius: .375rem; }
+  :where([data-slot="table-header"]) { background-color: var(--muted); }
+  :where([data-slot="navigation-menu-viewport"]) { border-radius: var(--radius); box-shadow: var(--shadow-pop); }
+  :where([data-slot="sidebar-inner"]) { box-shadow: none; }
+  /* Hover changes color, never position. An outline button fills with the foreground. */
+  @media (hover: hover) {
+    :where([data-ui-button][data-variant="default"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: color-mix(in oklab, var(--primary) 86%, var(--foreground)); }
+    :where([data-ui-button][data-variant="outline"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: var(--foreground); border-color: var(--foreground); color: var(--background); }
+    :where([data-ui-button][data-variant="signature"]):hover:not(:disabled):not([aria-disabled="true"])::before { filter: brightness(1.2) saturate(1.15); scale: 1.03 1.08; }
   }
   .sbdocs.sbdocs-wrapper { background: var(--background); color: var(--foreground); }
-}
-@media (hover: hover) {
-  :where([data-ui-button]):hover:not(:disabled):not([aria-disabled="true"]) { translate: 0 -1px; }
-  :where([data-ui-button][data-variant="default"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: var(--primary); box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring-rest), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
-  :where([data-ui-button][data-variant="default"]):hover:focus-visible:not(:disabled):not([aria-disabled="true"]) { box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
 }
 @keyframes azure-item-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
 @keyframes azure-check-in { from { opacity: 0; scale: .65; } to { opacity: 1; scale: 1; } }
 @keyframes azure-check-draw { from { stroke-dashoffset: 23; } to { stroke-dashoffset: 0; } }
 @keyframes azure-panel-in { from { opacity: 0; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
 @keyframes azure-content-in { from { opacity: .2; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
-@keyframes azure-ambient { from { transform: translate(-4%, -2%); } to { transform: translate(4%, 2%); } }
-@keyframes azure-sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
 /* Light crosses in the first 60% of each cycle, then rests. */
 @keyframes azure-glint { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(250%); } }
 @keyframes azure-shimmer { 0% { transform: translateX(-100%); } 70%, 100% { transform: translateX(100%); } }
@@ -423,8 +381,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .azure-hero::before { animation: none !important; transform: none !important; }
-  [data-ui-button]::before { display: none !important; }
   [data-slot="skeleton"]::after, [data-slot="progress-indicator"]::after { display: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -434,8 +390,6 @@
     transition-duration: 0.01ms !important;
   }
 }
-[data-motion="reduced"] .azure-hero::before { animation: none !important; transform: none !important; }
-[data-motion="reduced"] [data-ui-button]::before { display: none !important; }
 [data-motion="reduced"] [data-slot="skeleton"]::after, [data-motion="reduced"] [data-slot="progress-indicator"]::after { display: none !important; }
 [data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
   animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
@@ -444,21 +398,26 @@
 
 /* Copy with Header: layout stays independent of router and provider setup. */
 @layer atelier {
-  .azure-header { position: relative; z-index: 40; margin: 16px auto; width: calc(100% - 32px); max-width: 1280px; }
-  .azure-header[data-sticky="true"] { position: sticky; top: 16px; }
-  .header-bar { display: flex; align-items: center; gap: 24px; min-height: 72px; padding: 12px 20px; border: 1px solid color-mix(in oklab, var(--glass-highlight) 35%, var(--border)); border-radius: 20px; }
-  .header-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 240px; overflow-wrap: anywhere; font-size: 20px; font-weight: 700; letter-spacing: -.04em; border-radius: 8px; }
+  /* A full-width band on the ground, with a rule below. */
+  .azure-header { position: relative; z-index: 40; width: 100%; background-color: var(--background); border-bottom: 1px solid var(--border); }
+  .azure-header[data-sticky="true"] { position: sticky; top: 0; }
+  .header-bar { display: flex; align-items: center; gap: 24px; min-height: 72px; max-width: 1440px; margin-inline: auto; padding: 12px clamp(16px, 4vw, 32px); }
+  .header-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 240px; overflow-wrap: anywhere; font-family: var(--font-heading); font-size: 20px; font-weight: 600; letter-spacing: -.04em; border-radius: 4px; }
   .header-brand:focus-visible { outline: 3px solid var(--ring); outline-offset: 4px; }
   .header-desktop { display: none; }
   .header-mobile { margin-left: auto; flex-shrink: 0; }
-  .header-link { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 12px; font-size: 14px; overflow-wrap: anywhere; transition: background-color var(--motion-base), color var(--motion-base); }
+  .header-link { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 6px; font-size: 14px; overflow-wrap: anywhere; transition: background-color var(--motion-base), color var(--motion-base); }
+  .header-link-label { font-family: var(--font-heading); }
   .header-link:hover, .header-link:focus-visible { background: var(--accent); color: var(--accent-foreground); }
   .header-link:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
   .header-link[aria-current="page"], .azure-header [data-active="true"], .header-sheet [data-active="true"] { color: var(--primary); background-color: var(--accent); }
   .header-link-icon { padding-top: 2px; flex-shrink: 0; }
   .header-link-icon svg { width: 18px; height: 18px; }
   .azure-header [data-slot="navigation-menu-trigger"] { background-color: transparent; height: auto; min-height: 40px; white-space: normal; text-align: left; }
-  .azure-header [data-slot="navigation-menu-trigger"][data-active="true"] { background-color: var(--accent); }
+  /* Top-level navigation changes color only; dropdown links keep a fill. */
+  .azure-header .header-desktop :is([data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-item"] > .header-link) { color: var(--muted-foreground); background-color: transparent; }
+  .azure-header .header-desktop :is([data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-item"] > .header-link):is(:hover, :focus-visible, [data-state="open"]) { color: var(--foreground); background-color: transparent; }
+  .azure-header .header-desktop :is([data-slot="navigation-menu-trigger"][data-active="true"], [data-slot="navigation-menu-item"] > .header-link[aria-current="page"]) { color: var(--primary); background-color: transparent; }
   .azure-header .header-dropdown { width: 320px; max-width: calc(100vw - 64px); }
   .header-sheet { width: min(90vw, 400px); max-width: 400px; height: 100dvh; overflow-y: auto; }
   .header-sheet [data-slot="accordion-trigger"] { padding-inline: 12px; }

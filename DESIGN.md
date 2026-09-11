@@ -200,7 +200,7 @@ Radius is small and consistent. A corner tells you what kind of thing you are lo
 
 ### Brand texture
 
-- **Signature ring.** The one main action on a view can use `variant="signature"`: a `--background` fill inside a 3px ring of Azure running into Glacier under a fine grain. The ring is static. On hover it brightens and grows by 2px on the pop spring. Use it once per view; ordinary primary actions use the flat `default` variant.
+- **Signature ring.** The one main action on a view can use `variant="signature"`: a `--background` fill inside a 3px ring of Azure running into Glacier under a fine grain. The ring is static. On hover it brightens and swells slightly on the pop spring. Use it once per view; ordinary primary actions use the flat `default` variant.
 - **Frost grain (`--frost-grain`).** A static noise texture at about 2% opacity. It lives only in the signature ring and in brand panels, where it keeps the gradients from banding.
 
 ---
@@ -275,7 +275,7 @@ Left-align text inside cells and heroes. Center only section intros.
 
 | Primitive | Motion |
 | :-- | :-- |
-| Button | Fill and border color change on hover; nothing lifts. Presses to .97 on the pop spring. An outline button fills with the foreground color on hover. The signature ring brightens and grows 2px |
+| Button | Fill and border color change on hover; nothing lifts. Presses to .97 on the pop spring. An outline button fills with the foreground color on hover. The signature ring brightens and swells slightly |
 | Focus ring | Blooms from 0 to 3px on the pop spring. Keyboard focus only |
 | Menus, popovers, select, tooltip | Scale .96 to 1 from the trigger on `--ease-settle`; items stagger in. Exit: fade and scale to .98 on `--ease-exit` |
 | Dialog | Rises 8px and scales .97 to 1 on `--ease-settle`. Exit: fast fade. Scrim fades opacity only |
@@ -318,7 +318,7 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 
 ## Performance budget
 
-- Animate only `transform`, `opacity`, CSS custom properties, and a one-shot `filter` for Reveal.
+- Animate only `transform`, `opacity`, CSS custom properties, a one-shot `filter` for Reveal, and the signature ring's hover brightness.
 - No `backdrop-filter`. Surfaces are opaque, so nothing needs to blur what is behind it.
 - The signature ring and the grain are static images; they never animate at rest.
 - At most one infinite animation on screen, not counting spinners, loading progress, and skeletons.

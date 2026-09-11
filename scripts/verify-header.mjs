@@ -28,7 +28,7 @@ async function surfaceStyle(locator) {
     const ctx = canvas.getContext("2d")
     ctx.fillStyle = style.backgroundColor
     ctx.fillRect(0, 0, 1, 1)
-    return { alpha: ctx.getImageData(0, 0, 1, 1).data[3], blur: style.backdropFilter, radius: style.borderRadius, blurToken: style.getPropertyValue("--glass-blur") }
+    return { alpha: ctx.getImageData(0, 0, 1, 1).data[3], blur: style.backdropFilter, radius: style.borderRadius, rule: style.borderBottomWidth }
   })
 }
 try {
@@ -41,12 +41,13 @@ try {
       await brand.waitFor()
       await page.evaluate(() => document.fonts.ready)
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "Header must fit viewport")
-      const style = await surfaceStyle(page.locator(".header-bar"))
-      assert.equal(style.radius, "20px")
-      assert(style.blur.includes("16px") && style.alpha < 255)
+      // A flat, opaque band with a rule below, spanning the viewport.
+      const style = await surfaceStyle(page.locator("header"))
+      assert.deepEqual(style, { alpha: 255, blur: "none", radius: "0px", rule: "1px" }, `Header band: ${JSON.stringify(style)}`)
+      assert.equal(Math.round((await page.locator("header").boundingBox()).width), await page.evaluate(() => document.documentElement.clientWidth), "Header band spans the viewport")
       await page.screenshot({ path: `artifacts/visual/header-${theme}-${width}.png`, animations: "disabled" })
       await page.evaluate(() => window.scrollTo(0, 300))
-      assert.equal(Math.round((await page.locator("header").boundingBox()).y), 16)
+      assert.equal(Math.round((await page.locator("header").boundingBox()).y), 0)
       await page.evaluate(() => window.scrollTo(0, 0))
       if (width < 1024) {
         const trigger = page.getByRole("button", { name: "Open navigation" })
@@ -90,13 +91,6 @@ try {
         const bounds = await page.getByRole("link", { name: /Tools for distributed/ }).boundingBox()
         assert(bounds.x >= 0 && bounds.x + bounds.width <= width, "Dropdown must remain in viewport")
       }
-      await page.evaluate(() => {
-        const strip = rules => { for (let i = rules.cssRules.length - 1; i >= 0; i--) { const rule = rules.cssRules[i]; if (rule instanceof CSSSupportsRule && rule.conditionText.includes("backdrop-filter")) rules.deleteRule(i); else if (rule.cssRules) strip(rule) } }
-        for (const sheet of document.styleSheets) strip(sheet)
-      })
-      const fallback = await surfaceStyle(page.locator(".header-bar"))
-      assert.equal(fallback.alpha, 255)
-      assert.equal(fallback.blur, "none")
       await page.close()
       console.log(`Header: ${theme}, ${width}px passed`)
     }

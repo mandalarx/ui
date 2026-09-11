@@ -14,6 +14,7 @@ function InteractionSpecimen() {
     <h1 className="text-2xl font-semibold">Motion & interaction contracts</h1>
     <Tabs defaultValue="first"><TabsList aria-label="Specimen panels"><TabsTrigger value="first">First</TabsTrigger><TabsTrigger value="second">Second</TabsTrigger><TabsTrigger value="locked" disabled>Locked</TabsTrigger></TabsList><TabsContent value="first">First panel</TabsContent><TabsContent value="second">Second panel</TabsContent></Tabs>
     <label className="flex items-center gap-3"><Switch />Notifications</label>
+    <Button variant="signature">Publish specimen</Button>
     <Dialog><DialogTrigger asChild><Button ref={trigger}>Edit specimen</Button></DialogTrigger><DialogContent><DialogTitle>Edit specimen</DialogTitle><DialogDescription>Escape closes this layer and restores focus.</DialogDescription><DialogClose asChild><Button>Done</Button></DialogClose></DialogContent></Dialog>
     <section><h2 className="mb-3 text-lg font-medium">Disclosure</h2><Accordion type="single" collapsible><AccordionItem value="detail"><AccordionTrigger>Details</AccordionTrigger><AccordionContent>Motion follows state.</AccordionContent></AccordionItem></Accordion></section>
     <Button variant="outline" onClick={() => setCount(count + 1)}>Rerender {count}</Button>
@@ -76,7 +77,10 @@ export const ReducedMotion: Story = { globals: { motion: "reduced" }, play: asyn
   const canvas = within(canvasElement)
   const button = canvas.getByRole("button", { name: "Edit specimen" })
   await waitFor(() => expect(parseFloat(getComputedStyle(button).transitionDuration)).toBeLessThan(.001))
-  await expect(getComputedStyle(button, "::before").display).toBe("none")
+  // The signature ring is a static texture, not motion: it stays under reduced motion.
+  const signature = canvas.getByRole("button", { name: "Publish specimen" })
+  await expect(getComputedStyle(signature, "::before").display).not.toBe("none")
+  await expect(getComputedStyle(signature, "::before").backgroundImage).toContain("linear-gradient")
   await userEvent.click(button)
   const dialog = await within(document.body).findByRole("dialog")
   await expect(parseFloat(getComputedStyle(dialog).animationDuration)).toBeLessThan(.001)
