@@ -158,8 +158,8 @@ Solid surfaces anchor work: forms, tables, ordinary cards, inputs. Glass is a pr
 
 - `backdrop-filter: blur(16px) saturate(140%)`, static. The blur never animates.
 - Tint: 94% for dense popups; 86% (light) and 90% (dark) for featured cards. Tune with `--glass-tint`, `--glass-blur`, `--glass-shadow`.
-- **Refraction rim:** a 1px gradient rim, brightest at the top-left where light enters and fading toward the bottom-right. Built as a masked `::after` border so it follows the radius exactly.
-- **Frost grain:** a static noise texture at about 3% opacity. It gives the glass a physical surface and prevents banding in the light gradients behind it.
+- **Refraction rim (`--glass-rims`):** light enters at the top-left as a bright 1px rim and leaves at the bottom-right as a faint Glacier edge (`--glass-edge`). Built from inset shadows, so it follows the radius, survives scrolling menus, and never needs a pseudo-element or a position change.
+- **Frost grain (`--frost-grain`):** a static noise texture averaging about 2% opacity, tinted Ink in light mode and Ice in dark mode. It gives the glass a physical surface and prevents banding in the light gradients behind it. It is a background image, so it never changes the surface's tint or alpha.
 - **Fallback:** without `backdrop-filter` support, glass becomes an opaque surface with the same rim and shadow. Nothing depends on the blur to be legible.
 
 ### Elevation
