@@ -1,15 +1,13 @@
 "use client"
 
-import { useContext, useEffect, useImperativeHandle, useRef } from "react"
-import { animate, MotionConfigContext, useReducedMotion } from "motion/react"
-import { atelierSpring } from "@/components/motion-provider"
+import { useEffect, useImperativeHandle, useRef } from "react"
+import { animate } from "motion/react"
+import { atelierSpring, useMotionPreference } from "@/components/motion-provider"
 
 /** Measures primitive-owned state without taking over selection, refs, or keyboard handling. */
 export function useActiveIndicator<T extends HTMLElement>(forwardedRef?: React.Ref<T>) {
   const element = useRef<T | null>(null)
-  const systemReduced = useReducedMotion()
-  const { reducedMotion } = useContext(MotionConfigContext)
-  const reduced = reducedMotion === "always" || (reducedMotion !== "never" && systemReduced)
+  const reduced = useMotionPreference()
   useImperativeHandle(forwardedRef, () => element.current!, [])
 
   useEffect(() => {
