@@ -173,6 +173,9 @@
   --elevation-3: var(--glass-shadow), var(--overlay-shadow);
   /* Light enters top-left and exits bottom-right. */
   --glass-rims: inset 0 1px 0 var(--glass-rim), inset 1px 0 0 var(--surface-highlight), inset -1px -1px 0 var(--glass-edge);
+  /* Shadow lists that carry a focus ring reserve its slot, so focus blooms from 0 instead of snapping. */
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 45%, transparent);
+  --focus-ring-rest: 0 0 0 0 transparent;
 }
 
 @layer atelier {
@@ -191,38 +194,68 @@
     transition-duration: 260ms;
   }
   :where([data-ui-button][data-variant="default"]) {
-    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring-rest), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
     background-image: linear-gradient(180deg, #ffffff04, transparent);
     position: relative;
     isolation: isolate;
     overflow: hidden;
   }
+  :where([data-ui-button][data-variant="default"]):focus-visible {
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring), 0 3px 8px -3px color-mix(in oklab, var(--primary) 55%, transparent);
+  }
   :where([data-ui-button], [data-slot="toggle"]):active:not(:disabled):not([aria-disabled="true"]) { scale: .97; }
   :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="input-group"], [data-slot="combobox-input"]) {
     border-radius: var(--radius);
     background-color: color-mix(in oklab, var(--card) 75%, var(--background));
-    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035);
+    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), var(--focus-ring-rest);
     transition-property: border-color, box-shadow, background-color;
+    transition-duration: 260ms;
+    transition-timing-function: var(--ease-spring);
+  }
+  :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="combobox-input"]):focus-visible,
+  :where([data-slot="input-group"]):has(:focus-visible) {
+    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), var(--focus-ring);
+  }
+  :where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"], [data-slot="combobox-input"])[aria-invalid="true"],
+  :where([data-slot="input-group"]):has([aria-invalid="true"]) {
+    box-shadow: inset 0 1px 2px oklch(.15 .02 250 / .035), 0 0 0 3px color-mix(in oklab, var(--destructive) 22%, transparent);
   }
   :where([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
     border-radius: 1.5rem;
     box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
+    /* Dialogs rise a few pixels and settle; they leave with a quick fade. */
+    --tw-enter-scale: .97;
+    --tw-enter-translate-y: .5rem;
+    --tw-exit-scale: .98;
     animation-duration: var(--motion-slow);
-    animation-timing-function: var(--ease-spring);
+    animation-timing-function: var(--ease-settle);
   }
-  :where([data-slot="sheet-content"], [data-slot="drawer-content"]) { box-shadow: var(--overlay-shadow); animation-duration: 380ms; animation-timing-function: var(--ease-emphasized); }
+  :where([data-slot="sheet-content"], [data-slot="drawer-content"]) { animation-duration: 380ms; animation-timing-function: var(--ease-enter); }
   :where([data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"], [data-slot="drawer-overlay"]) {
     background: oklch(.1 .025 250 / .48);
     backdrop-filter: blur(5px);
     animation-duration: 240ms;
   }
+  /* Menus arrive from their trigger on the settle spring. */
   :where([data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"]) {
     border-radius: 1rem;
     background-color: var(--popover);
     box-shadow: inset 0 1px 0 var(--surface-highlight), var(--overlay-shadow);
-    animation-duration: 260ms;
-    animation-timing-function: var(--ease-spring);
+    --tw-enter-scale: .96;
+    --tw-exit-scale: .98;
+    animation-duration: var(--motion-slow);
+    animation-timing-function: var(--ease-settle);
   }
+  /* Navigation content slides between items in viewport mode; keep its own scale. */
+  :where([data-slot="navigation-menu-content"]) { --tw-enter-scale: revert-layer; --tw-exit-scale: revert-layer; }
+  :where([data-slot="tooltip-content"]) { --tw-enter-scale: .96; --tw-exit-scale: .98; animation-duration: var(--motion-base); animation-timing-function: var(--ease-settle); }
+  /* Everything leaves faster than it came, accelerating away. */
+  :where([data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-sub-content"], [data-slot="context-menu-content"], [data-slot="context-menu-sub-content"], [data-slot="menubar-content"], [data-slot="menubar-sub-content"], [data-slot="popover-content"], [data-slot="hover-card-content"], [data-slot="select-content"], [data-slot="combobox-content"], [data-slot="navigation-menu-content"], [data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="dialog-overlay"], [data-slot="alert-dialog-overlay"], [data-slot="sheet-overlay"])[data-state="closed"] {
+    animation-duration: var(--motion-exit);
+    animation-timing-function: var(--ease-exit);
+  }
+  :where([data-slot="tooltip-content"])[data-state="closed"] { animation-duration: var(--motion-exit-fast); animation-timing-function: var(--ease-exit); }
+  :where([data-slot="sheet-content"])[data-state="closed"] { animation-duration: var(--motion-exit-slow); animation-timing-function: var(--ease-exit); }
   :where([data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"], [data-slot="context-menu-item"], [data-slot="menubar-item"], [data-slot="select-item"], [data-slot="command-item"]) {
     border-radius: .5rem;
     transition-property: background-color, color;
@@ -232,16 +265,51 @@
   :where([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"]):nth-child(3) { animation-delay: 40ms; }
   :where([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"]):nth-child(n+4) { animation-delay: 60ms; }
   :where([data-slot="switch-thumb"], [data-slot="slider-thumb"]) { transition-timing-function: var(--ease-spring); transition-duration: 300ms; }
-  :where([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"]) { transition-property: background-color, border-color, box-shadow; }
-  :where([data-slot="checkbox-indicator"], [data-slot="radio-group-indicator"]) { animation: azure-check-in 220ms var(--ease-spring); }
+  /* Pressing a switch stretches its thumb toward the far side; releasing springs it home. */
+  :where([data-slot="switch-thumb"]) { transition-property: translate, transform, width; }
+  :where([data-slot="switch"][data-size="default"]:active:not(:disabled)) [data-slot="switch-thumb"] { width: 1.25rem; }
+  :where([data-slot="switch"][data-size="default"][data-state="checked"]:active:not(:disabled)) [data-slot="switch-thumb"] { translate: calc(.75rem - 2px) 0; }
+  :where([data-slot="switch"][data-size="sm"]:active:not(:disabled)) [data-slot="switch-thumb"] { width: .9375rem; }
+  :where([data-slot="switch"][data-size="sm"][data-state="checked"]:active:not(:disabled)) [data-slot="switch-thumb"] { translate: calc(.5625rem - 2px) 0; }
+  :where([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"]) {
+    transition-property: background-color, border-color, box-shadow;
+    transition-duration: 260ms;
+    transition-timing-function: var(--ease-spring);
+  }
+  :where([data-slot="radio-group-indicator"]) { animation: azure-check-in 220ms var(--ease-spring); }
+  /* The check draws itself. Lucide's check path ("M20 6 9 17l-5-5") is about 22.6 units long. */
+  :where([data-slot="checkbox-indicator"]) svg path { stroke-dasharray: 23; animation: azure-check-draw 220ms var(--ease-enter) both; }
   :where([data-slot="slider-range"], [data-slot="progress-indicator"]) { transition: transform 400ms var(--ease-emphasized), width 300ms var(--ease-emphasized); }
-  :where([data-slot="accordion-content"]) { animation-duration: 320ms; animation-timing-function: var(--ease-emphasized); }
+  /* While loading, light runs along the bar; on completion the track glows once. */
+  :where([data-slot="progress-indicator"]) { position: relative; }
+  :where([data-slot="progress-indicator"][data-state="loading"])::after {
+    content: ""; position: absolute; inset-block: 0; left: 0; width: 40%; pointer-events: none;
+    background: linear-gradient(90deg, transparent, oklch(1 0 0 / .45), transparent);
+    transform: translateX(-100%);
+    animation: azure-glint var(--motion-light) linear infinite;
+  }
+  :where([data-slot="progress"][data-state="complete"]) { animation: azure-complete 900ms var(--ease-enter); }
+  /* Frost shimmer: the button sheen's light, slower, across loading placeholders. */
+  :where([data-slot="skeleton"]) { position: relative; overflow: hidden; isolation: isolate; animation: none; }
+  :where([data-slot="skeleton"])::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(110deg, transparent 30%, var(--surface-highlight) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: azure-shimmer var(--motion-light) var(--ease-standard) infinite;
+  }
+  :where([data-slot="accordion-content"]) { animation-duration: 320ms; animation-timing-function: var(--ease-enter); }
+  :where([data-slot="accordion-content"])[data-state="closed"] { animation-duration: var(--motion-exit-slow); animation-timing-function: var(--ease-exit); }
+  /* Content follows the opening height; it starts faint rather than invisible so it is never hidden. */
+  :where([data-slot="accordion-content"])[data-state="open"] > div { animation: azure-content-in 320ms var(--ease-enter); }
   :where([data-slot="accordion-trigger"]) { text-decoration: none; }
+  :where([data-slot="accordion-trigger"], [data-slot="navigation-menu-trigger"]) > svg { transition-duration: 300ms; transition-timing-function: var(--ease-spring); }
   :where([data-slot="tabs-list"]) { position: relative; isolation: isolate; }
+  /* Edges are animated separately by useActiveIndicator, so the pill stretches toward its target. */
   :where([data-slot="tabs-list"])::before {
     content: ""; position: absolute; left: 0; top: 0; z-index: -1; pointer-events: none;
-    width: var(--indicator-width, 0px); height: var(--indicator-height, 0px);
-    transform: translate(var(--indicator-x, 0px), var(--indicator-y, 0px));
+    width: calc(var(--indicator-right, 0px) - var(--indicator-left, 0px));
+    height: calc(var(--indicator-bottom, 0px) - var(--indicator-top, 0px));
+    transform: translate(var(--indicator-left, 0px), var(--indicator-top, 0px));
     border: 1px solid var(--border); border-radius: .5rem;
     background: var(--card); box-shadow: var(--surface-shadow); opacity: var(--indicator-opacity, 0);
     transition: opacity 120ms;
@@ -250,7 +318,8 @@
     background: linear-gradient(var(--primary), var(--primary)) bottom / 100% 2px no-repeat;
     border: 0; border-radius: 0; box-shadow: none;
   }
-  [data-slot="tabs-list"] [data-slot="tabs-trigger"][data-state="active"] { background: transparent; box-shadow: none; border-color: transparent; color: var(--foreground); }
+  [data-slot="tabs-list"] [data-slot="tabs-trigger"][data-state="active"] { background: transparent; box-shadow: var(--focus-ring-rest); border-color: transparent; color: var(--foreground); }
+  [data-slot="tabs-list"] [data-slot="tabs-trigger"]:focus-visible { box-shadow: var(--focus-ring); }
   [data-slot="tabs-list"] [data-slot="tabs-trigger"]::after { display: none; }
   :where([data-slot="tabs-content"][data-state="active"]) { animation: azure-panel-in 240ms var(--ease-emphasized); }
   :where([data-slot="sidebar-menu-button"][data-active="true"]) { box-shadow: inset 3px 0 0 var(--primary); }
@@ -310,13 +379,23 @@
 }
 @media (hover: hover) {
   :where([data-ui-button]):hover:not(:disabled):not([aria-disabled="true"]) { translate: 0 -1px; }
-  :where([data-ui-button][data-variant="default"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: var(--primary); box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
+  :where([data-ui-button][data-variant="default"]):hover:not(:disabled):not([aria-disabled="true"]) { background-color: var(--primary); box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring-rest), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
+  :where([data-ui-button][data-variant="default"]):hover:focus-visible:not(:disabled):not([aria-disabled="true"]) { box-shadow: inset 0 1px 0 oklch(1 0 0 / .2), var(--focus-ring), 0 6px 18px -5px color-mix(in oklab, var(--primary) 60%, transparent); }
 }
 @keyframes azure-item-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
 @keyframes azure-check-in { from { opacity: 0; scale: .65; } to { opacity: 1; scale: 1; } }
+@keyframes azure-check-draw { from { stroke-dashoffset: 23; } to { stroke-dashoffset: 0; } }
 @keyframes azure-panel-in { from { opacity: 0; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
+@keyframes azure-content-in { from { opacity: .2; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
 @keyframes azure-ambient { from { transform: translate(-4%, -2%); } to { transform: translate(4%, 2%); } }
 @keyframes azure-sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+/* Light crosses in the first 60% of each cycle, then rests. */
+@keyframes azure-glint { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(250%); } }
+@keyframes azure-shimmer { 0% { transform: translateX(-100%); } 70%, 100% { transform: translateX(100%); } }
+@keyframes azure-complete {
+  from { box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 45%, transparent); }
+  to { box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 0%, transparent); }
+}
 
 @layer base {
   * { @apply border-border outline-ring/50; }
@@ -332,6 +411,7 @@
 @media (prefers-reduced-motion: reduce) {
   .azure-hero::before { animation: none !important; transform: none !important; }
   [data-ui-button]::before { display: none !important; }
+  [data-slot="skeleton"]::after, [data-slot="progress-indicator"]::after { display: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
@@ -342,6 +422,7 @@
 }
 [data-motion="reduced"] .azure-hero::before { animation: none !important; transform: none !important; }
 [data-motion="reduced"] [data-ui-button]::before { display: none !important; }
+[data-motion="reduced"] [data-slot="skeleton"]::after, [data-motion="reduced"] [data-slot="progress-indicator"]::after { display: none !important; }
 [data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
   animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
   transition-duration: .01ms !important; scroll-behavior: auto !important;

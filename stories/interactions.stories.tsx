@@ -63,7 +63,7 @@ export const InterruptedMotion: Story = { play: async ({ canvasElement }) => {
   const second = canvas.getByRole("tab", { name: "Second" })
   await userEvent.click(second)
   const list = canvas.getByRole("tablist")
-  await waitFor(() => expect(list.style.getPropertyValue("--indicator-width")).not.toBe(""))
+  await waitFor(() => expect(list.style.getPropertyValue("--indicator-right")).not.toBe(""))
   const panel = canvas.getByRole("tabpanel")
   await waitFor(() => expect(panel.getAnimations().filter(animation => animation.playState === "running")).toHaveLength(0))
   await userEvent.click(canvas.getByRole("button", { name: "Rerender 0" }))

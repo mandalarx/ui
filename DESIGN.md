@@ -239,7 +239,7 @@ Radius grows with the size and elevation of the thing. It is information: a glan
 | Switch | Thumb stretches while pressed, then springs to its new side |
 | Checkbox | The check draws itself in 220ms |
 | Radio | The dot pops in on the pop spring |
-| Accordion | Height opens on `--ease-enter`; content fades and rises 4px just behind it; the chevron turns on the spring |
+| Accordion | Height opens on `--ease-enter`; content rises 5px and brightens from 20% opacity (never from invisible, so it is always findable); the chevron turns on the spring |
 | Progress | While loading, a slow glint travels the bar. On completion, one soft glow |
 | Skeleton | A slow frost shimmer sweeps across, the same light as the button sheen |
 
