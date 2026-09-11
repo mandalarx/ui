@@ -63,3 +63,7 @@ pnpm build
 ```
 
 The browser suite runs accessibility checks for every story plus keyboard, focus, rapid interruption, refs, theme, and reduced-motion contracts. Visual verification serves the built Storybook temporarily, checks mobile/tablet/desktop in both themes, and saves review images in the ignored `artifacts/visual` directory. These screenshots are review artifacts, not a pixel-diff baseline.
+
+## Reusable Header
+
+The custom [Header](docs/header.md) provides floating Azure Glass navigation with desktop dropdowns, mobile navigation, and configurable branding and actions. Browse **Components / Header** in Storybook. Copy its sources into a React + Tailwind 4 app, or run `node scripts/prepare-header-example.mjs /absolute/path/to/new-app` to export a standalone Vite example. No Next.js runtime is required.
