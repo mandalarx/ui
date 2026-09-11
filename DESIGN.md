@@ -266,7 +266,7 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 ## Accessibility
 
 - **Reduced motion.** The operating system preference and the `data-motion="reduced"` override are both honored, in CSS and JS. Under reduced motion, durations collapse to near zero and every decorative effect stops at a static, composed frame: caustics hold still, pointer light rests at the top edge, the rim glint is skipped, reveals show content immediately, number roll swaps digits, and theme changes are instant. Each effect has explicit rules in both escape hatches, because a blanket duration override does not neutralize persistent transforms.
-- **Contrast.** WCAG AA in both themes, checked by axe on every Storybook story. Text never sits on a gradient or a glow. Text over caustics sits on a scrim that holds 4.5:1 at the brightest frame.
+- **Contrast.** WCAG AA in both themes, checked by axe on every Storybook story. Text never sits on a gradient or a glow. Text on a caustic surface sits on the quiet side of its `fade` and uses `--foreground`: muted text on the pale light-mode pool measures about 4.4:1, just short of AA, while foreground text holds well above 4.5:1 even at full pattern strength.
 - **Decoration is silent.** Effect layers are `aria-hidden`. Animated values have a plain-text equivalent for assistive technology.
 - **Focus is always visible** and never depends on motion to be seen.
 - **Nothing is hidden by default.** Content that reveals is in the DOM and readable before and after its entrance, including when JavaScript fails.

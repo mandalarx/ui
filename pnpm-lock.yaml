@@ -160,6 +160,9 @@ importers:
       lucide-react:
         specifier: ^1.31.0
         version: 1.43.0(react@19.2.6)
+      motion:
+        specifier: ^13.2.0
+        version: 13.2.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       next:
         specifier: 16.2.6
         version: 16.2.6(@babel/core@7.29.7(supports-color@10.2.2))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -257,9 +260,6 @@ importers:
       eslint-config-next:
         specifier: 16.2.6
         version: 16.2.6(@typescript-eslint/parser@8.70.0(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3)
-      motion:
-        specifier: ^13.2.0
-        version: 13.2.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       playwright:
         specifier: ^1.63.0
         version: 1.63.0

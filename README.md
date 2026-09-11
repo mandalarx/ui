@@ -51,6 +51,22 @@ Use `<Card data-surface="glass">` for featured cards. Ordinary cards, inputs, an
 
 The internal `atelier` layer, `atelierSpring` export, and `atelier-theme` preference key remain stable for existing consumers. `useMotionPreference()` resolves the provider and OS settings for custom gestures. Button sheen, ambient lighting, and custom motion stop under reduced motion.
 
+### Motion
+
+`app/globals.css` defines the motion tokens: touch, travel, and arrive durations, shorter exits, and enter, exit, settle, and pop curves. `--ease-settle` is `atelierSpring` sampled into a CSS `linear()` curve, so CSS and Motion share one feel. Primitives move only when someone acts or state changes: overlays scale from their trigger and leave faster than they arrive, the tabs indicator stretches toward its target, focus rings bloom, and checks draw themselves. See [DESIGN.md](DESIGN.md) for the choreography rules.
+
+## Expressive effects
+
+Opt-in components in `components/effects`, styled by `components/effects/effects.css`. Import that stylesheet after `app/globals.css`. None of them requires the Motion library.
+
+- `Caustics`: drifting water light for the one signature surface of a view.
+- `usePointerLight` with `data-light="follow"`: a glare and a rim light that follow a mouse or pen across glass. Keyboard focus sends one glint around the rim. The Header uses it.
+- `Reveal`: one orchestrated entrance. Content stays in the DOM and readable throughout.
+- `NumberRoll`: digits roll to each new value; the formatted value is the accessible text.
+- `startThemeTransition`: a theme change spreads outward from its trigger using View Transitions.
+
+Browse **Foundations / Effects** in Storybook. Each effect has a static state under reduced motion.
+
 ## Validation
 
 ```bash
