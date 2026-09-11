@@ -12,7 +12,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Mandalar UI",
-  description: "The graphite and violet component system built on shadcn/ui.",
+  description: "The azure and glass component system built on shadcn/ui.",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

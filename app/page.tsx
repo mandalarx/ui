@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 
 export default function Home() {
   return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-5 p-8">
-    <p className="font-mono text-xs uppercase tracking-widest text-primary">Mandalar UI / Violet Atelier</p>
+    <p className="font-mono text-xs uppercase tracking-widest text-primary">Mandalar UI / Azure Glass</p>
     <h1 className="text-3xl font-semibold tracking-tight">The component workbench lives in Storybook.</h1>
     <p className="leading-7 text-muted-foreground">Explore all 61 components, 97 blocks, design foundations, and interaction examples.</p>
     <Button asChild><a href="https://mandalar-ui.heinthantaung191.chatgpt.site">Open the workbench</a></Button>
