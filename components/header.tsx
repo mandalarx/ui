@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { usePointerLight } from "@/components/effects/pointer-light"
 
 type HeaderLink = {
   id: string
@@ -53,6 +54,7 @@ export function Header({
   const [open, setOpen] = React.useState(false)
   const brandRef = React.useRef<HTMLAnchorElement>(null)
   const desktopResize = React.useRef(false)
+  const barRef = usePointerLight<HTMLDivElement>()
 
   React.useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)")
@@ -89,7 +91,7 @@ export function Header({
   ))
 
   return <header data-slot="header" data-sticky={sticky} className={cn("azure-header", className)}>
-    <div data-surface="glass" className="header-bar">
+    <div ref={barRef} data-surface="glass" data-light="follow" className="header-bar">
       <Link ref={brandRef} href={brandHref} aria-label={brandLabel} className="header-brand">{brand}</Link>
       <div className="header-desktop">
         <NavigationMenu aria-label={navigationLabel} viewport={false}>
