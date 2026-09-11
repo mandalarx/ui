@@ -12,6 +12,7 @@ import "@fontsource/ibm-plex-mono/400.css"
 import "@fontsource/ibm-plex-mono/500.css"
 import "@fontsource/ibm-plex-mono/600.css"
 import "../app/globals.css"
+import "../components/effects/effects.css"
 
 // Load docs only after its renderer is initialized; eager imports break the static renderer.
 const DocsContainer = lazy(async () => ({ default: (await import("@storybook/addon-docs/blocks")).DocsContainer }))

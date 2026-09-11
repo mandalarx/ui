@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL("../", import.meta.url))
 const destination = process.argv[2] ? resolve(process.argv[2]) : await mkdtemp(resolve(tmpdir(), "mandalar-header-"))
 if (process.argv[2]) await mkdir(destination)
 await cp(resolve(root, "examples/header-vite"), destination, { recursive: true })
-const files = ["components/header.tsx", "components/ui/button.tsx", "components/ui/navigation-menu.tsx", "components/ui/sheet.tsx", "components/ui/accordion.tsx", "lib/utils.ts", "app/globals.css", "vendor/shadcn-tailwind-4.13.0.css"]
+const files = ["components/header.tsx", "components/ui/button.tsx", "components/ui/navigation-menu.tsx", "components/ui/sheet.tsx", "components/ui/accordion.tsx", "components/effects/pointer-light.tsx", "components/effects/effects.css", "lib/utils.ts", "app/globals.css", "vendor/shadcn-tailwind-4.13.0.css"]
 for (const file of files) {
   await mkdir(dirname(resolve(destination, file)), { recursive: true })
   await cp(resolve(root, file), resolve(destination, file))

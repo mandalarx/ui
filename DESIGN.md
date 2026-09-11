@@ -24,7 +24,7 @@ colors:
     muted-foreground: "#a0b6ce"
   light-sources:
     glacier: "#57def3"      # --glass-highlight: rims, glints, caustics
-    sunlit: "#fff3d6"       # --light-warm: inside light effects only, <=15% alpha
+    sunlit: "#fff3d6"       # --light-warm: inside light effects only, <=15% share
 typography:
   font-sans: "Manrope Variable (200-800)"
   font-mono: "IBM Plex Mono (400, 500, 600)"
@@ -101,8 +101,8 @@ Light sources are not UI colors. They never fill a control or carry text.
 
 | Token | Value | Role |
 | :-- | :-- | :-- |
-| `--glass-highlight` | `#57def3` Glacier | Rims, glints, caustics, the cyan edge of glass shadows |
-| `--light-warm` | `#fff3d6` Sunlit | A whisper of warmth inside caustics and specular highlights, at 15% alpha or less |
+| `--glass-highlight` | `#57def3` Glacier | Rims, glints, caustics, the cyan edge of glass shadows, and the pointer glare on light glass. On light glass, the pointer rim mixes in a little Azure to stay visible |
+| `--light-warm` | `#fff3d6` Sunlit | A whisper of warmth in sunlit caustics and the dark-mode pointer glare, as a 15% share or less |
 
 Why a warm light in a cold palette: light passing through water carries the color of the sun. A small warm component in the brightest highlights makes the blues read as *lit* rather than flat. Keep it inside light effects; the moment it touches chrome, it becomes a second accent.
 
@@ -253,7 +253,7 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 
 | Effect | What it does | Use for | Not for |
 | :-- | :-- | :-- | :-- |
-| **Caustics** | Water-light patterns drift slowly across a surface, the way sunlight moves on a pool floor | The one signature surface of a view: a hero, an empty state, an onboarding panel | Behind dense UI, behind body text without a scrim, more than once per view |
+| **Caustics** | Water-light patterns drift slowly across a surface, the way sunlight moves on a pool floor. In light mode, white light plays over a pale Glacier pool | The one signature surface of a view: a hero, an empty state, an onboarding panel | Behind dense UI, behind body text without a scrim, more than once per view |
 | **Pointer light** | A soft glare and a brightening rim follow the pointer across glass. Keyboard focus sends one glint around the rim | Featured glass cards, the header bar | Solid surfaces, lists of many cards, touch-only contexts (it switches itself off) |
 | **Reveal** | Content clears from frost (blur to sharp) or rises into place, once | One orchestrated entrance per view, usually the headline | Every section on a page, content people need immediately |
 | **Number roll** | Digits roll to the new value in the direction of change | Stats, totals, counters that change while someone watches | Static numbers, long tables |
@@ -265,7 +265,7 @@ Opt-in components in `components/effects/`, styled by `components/effects/effect
 
 ## Accessibility
 
-- **Reduced motion.** The operating system preference and the `data-motion="reduced"` override are both honored, in CSS and JS. Under reduced motion, durations collapse to near zero and every decorative effect stops at a static, composed frame: caustics hold still, pointer light centers, reveals show content immediately, number roll swaps digits, and theme changes are instant. Each effect has explicit rules in both escape hatches, because a blanket duration override does not neutralize persistent transforms.
+- **Reduced motion.** The operating system preference and the `data-motion="reduced"` override are both honored, in CSS and JS. Under reduced motion, durations collapse to near zero and every decorative effect stops at a static, composed frame: caustics hold still, pointer light rests at the top edge, the rim glint is skipped, reveals show content immediately, number roll swaps digits, and theme changes are instant. Each effect has explicit rules in both escape hatches, because a blanket duration override does not neutralize persistent transforms.
 - **Contrast.** WCAG AA in both themes, checked by axe on every Storybook story. Text never sits on a gradient or a glow. Text over caustics sits on a scrim that holds 4.5:1 at the brightest frame.
 - **Decoration is silent.** Effect layers are `aria-hidden`. Animated values have a plain-text equivalent for assistive technology.
 - **Focus is always visible** and never depends on motion to be seen.

@@ -3,6 +3,7 @@ import { Header } from "./components/header"
 import "@fontsource-variable/manrope"
 import "@fontsource/ibm-plex-mono/400.css"
 import "./app/globals.css"
+import "./components/effects/effects.css"
 
 createRoot(document.getElementById("root")!).render(<>
   <Header brand="Your brand" brandHref="#home" brandLabel="Your brand home" activeHref="#guide"

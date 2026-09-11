@@ -1,0 +1,137 @@
+/* Azure Glass expressive layer. Every effect is opt-in; import once, after app/globals.css. */
+
+/* Effects that draw light inside an element make it a positioning context. This lives in the
+   components layer, so a positioning utility on the same element still wins. */
+@layer components {
+  :where([data-light="follow"]) { position: relative; isolation: isolate; }
+}
+
+@property --rim-angle { syntax: "<angle>"; inherits: false; initial-value: 0turn; }
+
+:root {
+  /* On a light surface, light shows only against a tinted pool: white lines over pale Glacier. */
+  --caustic-ground: color-mix(in oklab, var(--glass-highlight) 30%, color-mix(in oklab, var(--primary) 8%, transparent));
+  --caustic-cool: #ffffff;
+  --light-glare: color-mix(in oklab, var(--glass-highlight) 28%, transparent);
+  /* A pale Glacier rim disappears against a light border; a little Azure keeps it visible. */
+  --light-rim: color-mix(in oklab, var(--glass-highlight) 55%, var(--primary));
+  /* A static light texture: turbulence creases, inverted and sharpened into bright lines.
+     Light mode uses bolder lines: thin white light disappears against a pale pool. */
+  --caustic-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='turbulence' baseFrequency='.0095' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 -4 0 0 0 1.2'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='gamma' exponent='2'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  --caustic-gain: 1.25;
+}
+.dark {
+  --caustic-ground: color-mix(in oklab, var(--primary) 6%, transparent);
+  --caustic-cool: var(--glass-highlight);
+  --caustic-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='turbulence' baseFrequency='.0095' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 -2.6 0 0 0 1.1'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='gamma' exponent='3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  --caustic-gain: 1;
+  --light-glare: color-mix(in oklab, var(--light-warm) 15%, transparent);
+  --light-rim: var(--glass-highlight);
+}
+
+@layer atelier {
+  /* Caustics: two drifting copies of one texture. Where their lines cross, light adds up. */
+  .azure-caustics {
+    --caustic-line: var(--caustic-cool);
+    position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+    border-radius: inherit;
+    background: var(--caustic-ground);
+  }
+  .azure-caustics[data-tint="sunlit"] { --caustic-line: color-mix(in oklab, var(--light-warm) 15%, var(--caustic-cool)); }
+  /* The pattern fades away toward one side so text there stays on a quiet ground. */
+  .azure-caustics[data-fade="left"] { mask-image: linear-gradient(to right, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="right"] { mask-image: linear-gradient(to left, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="top"] { mask-image: linear-gradient(to bottom, transparent 10%, #000 70%); }
+  .azure-caustics[data-fade="bottom"] { mask-image: linear-gradient(to top, transparent 10%, #000 70%); }
+  .azure-caustics::before, .azure-caustics::after {
+    content: ""; position: absolute; inset: -30%;
+    background: var(--caustic-line);
+    -webkit-mask: var(--caustic-texture) 0 0 / 600px 600px repeat;
+    mask: var(--caustic-texture) 0 0 / 600px 600px repeat;
+    opacity: min(1, var(--caustic-opacity, .6) * var(--caustic-gain, 1));
+    mix-blend-mode: screen;
+    mix-blend-mode: plus-lighter;
+    will-change: transform;
+    animation: azure-caustic-a var(--motion-ambient) ease-in-out infinite alternate;
+  }
+  .azure-caustics::after {
+    -webkit-mask-size: 780px 780px;
+    mask-size: 780px 780px;
+    animation-name: azure-caustic-b;
+    animation-duration: calc(var(--motion-ambient) * 1.37);
+  }
+  .azure-caustics[data-paused]::before, .azure-caustics[data-paused]::after { animation-play-state: paused; }
+
+  /* Pointer light: set by usePointerLight. */
+  :where([data-light="follow"]) { --light-x: 30%; --light-y: 0%; }
+  :where([data-light="follow"])::before, :where([data-light="follow"])::after {
+    content: ""; position: absolute; z-index: -1; pointer-events: none; border-radius: inherit;
+    opacity: 0; transition: opacity var(--motion-slow) var(--ease-standard);
+  }
+  /* Glare: a soft highlight under the pointer; faintly sunlit in dark mode, Glacier on light glass. */
+  :where([data-light="follow"])::before {
+    inset: 0;
+    background: radial-gradient(circle 16rem at var(--light-x) var(--light-y), var(--light-glare), transparent 70%);
+  }
+  /* Rim: the border brightens nearest the light. */
+  :where([data-light="follow"])::after {
+    inset: -1px; padding: 1px;
+    background: radial-gradient(circle 10rem at var(--light-x) var(--light-y), var(--light-rim), transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  :where([data-light="follow"][data-lit])::before, :where([data-light="follow"][data-lit])::after { opacity: 1; }
+  /* Keyboard focus entering the surface sends one glint around the rim. */
+  :where([data-light="follow"]):has(:focus-visible)::after {
+    background: conic-gradient(from var(--rim-angle), transparent 0turn .7turn, var(--glass-highlight) .88turn, transparent 1turn);
+    animation: azure-rim-glint 1200ms var(--ease-standard) both;
+  }
+
+  /* Reveal: content is hidden only after hydration (see reveal.tsx), then clears once. */
+  :where([data-reveal][data-reveal-state="pending"]) > * { opacity: 0; }
+  :where([data-reveal="frost"][data-reveal-state="pending"]) > * { filter: blur(8px); }
+  :where([data-reveal="rise"][data-reveal-state="pending"]) > * { translate: 0 .75rem; }
+  /* Backwards fill only: no filter lingers afterwards to flatten glass inside. */
+  :where([data-reveal][data-reveal-state="shown"]) > * {
+    animation: azure-frost-clear 900ms var(--ease-enter) backwards;
+    animation-delay: calc(90ms * var(--reveal-index, 0));
+  }
+  :where([data-reveal="rise"][data-reveal-state="shown"]) > * { animation-name: azure-rise-in; animation-duration: 560ms; }
+  :where([data-reveal]) > :nth-child(2) { --reveal-index: 1; }
+  :where([data-reveal]) > :nth-child(3) { --reveal-index: 2; }
+  :where([data-reveal]) > :nth-child(n+4) { --reveal-index: 3; }
+
+  /* Number roll: each digit is a column of 0-9 that settles on its value. */
+  .azure-number-roll { display: inline-flex; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .azure-number-roll-track { display: inline-flex; }
+  .azure-number-roll [data-digit] { display: inline-block; height: 1.2em; overflow: hidden; }
+  .azure-number-roll [data-digit] > span {
+    display: flex; flex-direction: column;
+    translate: 0 calc(var(--digit) * -1.2em);
+    transition: translate var(--motion-slow) var(--ease-settle) calc(var(--place, 0) * 24ms);
+  }
+  .azure-number-roll [data-digit] > span > span { height: 1.2em; }
+}
+
+/* Theme transition: the new theme is revealed by a clip-path animation from theme-transition.ts. */
+:root[data-theme-transition]::view-transition-old(root),
+:root[data-theme-transition]::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+@keyframes azure-caustic-a { from { transform: translate3d(-3%, -2%, 0) rotate(-2deg); } to { transform: translate3d(3%, 2%, 0) rotate(6deg); } }
+@keyframes azure-caustic-b { from { transform: translate3d(3%, 2%, 0) rotate(3deg) scale(1.06); } to { transform: translate3d(-2%, -3%, 0) rotate(-4deg) scale(1); } }
+@keyframes azure-rim-glint { from { --rim-angle: 0turn; opacity: 1; } 80% { opacity: 1; } to { --rim-angle: 1turn; opacity: 0; } }
+@keyframes azure-frost-clear { from { opacity: 0; filter: blur(8px); translate: 0 .25rem; } to { opacity: 1; filter: blur(0); translate: 0 0; } }
+@keyframes azure-rise-in { from { opacity: 0; translate: 0 .75rem; } to { opacity: 1; translate: 0 0; } }
+
+/* Reduced motion: caustics hold still, pointer light rests at the top, the rim glint and
+   reveals are skipped. Both the OS preference and data-motion="reduced" apply. */
+@media (prefers-reduced-motion: reduce) {
+  .azure-caustics::before, .azure-caustics::after, [data-light="follow"]::after { animation: none !important; }
+  [data-light="follow"] { --light-x: 50% !important; --light-y: 0% !important; }
+  [data-reveal][data-reveal-state="pending"] > * { opacity: 1 !important; filter: none !important; translate: none !important; }
+}
+[data-motion="reduced"] .azure-caustics::before, [data-motion="reduced"] .azure-caustics::after,
+[data-motion="reduced"] [data-light="follow"]::after { animation: none !important; }
+[data-motion="reduced"] [data-light="follow"] { --light-x: 50% !important; --light-y: 0% !important; }
+[data-motion="reduced"] [data-reveal][data-reveal-state="pending"] > * { opacity: 1 !important; filter: none !important; translate: none !important; }
