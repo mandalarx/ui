@@ -65,8 +65,10 @@ export const InterruptedMotion: Story = { play: async ({ canvasElement }) => {
   const list = canvas.getByRole("tablist")
   await waitFor(() => expect(list.style.getPropertyValue("--indicator-width")).not.toBe(""))
   const panel = canvas.getByRole("tabpanel")
+  await waitFor(() => expect(panel.getAnimations().filter(animation => animation.playState === "running")).toHaveLength(0))
   await userEvent.click(canvas.getByRole("button", { name: "Rerender 0" }))
   await expect(canvas.getByRole("tabpanel")).toBe(panel)
+  await expect(panel.getAnimations().filter(animation => animation.playState === "running")).toHaveLength(0)
   await expect(second).toHaveAttribute("data-state", "active")
 } }
 
@@ -74,6 +76,7 @@ export const ReducedMotion: Story = { globals: { motion: "reduced" }, play: asyn
   const canvas = within(canvasElement)
   const button = canvas.getByRole("button", { name: "Edit specimen" })
   await waitFor(() => expect(parseFloat(getComputedStyle(button).transitionDuration)).toBeLessThan(.001))
+  await expect(getComputedStyle(button, "::before").display).toBe("none")
   await userEvent.click(button)
   const dialog = await within(document.body).findByRole("dialog")
   await expect(parseFloat(getComputedStyle(dialog).animationDuration)).toBeLessThan(.001)
