@@ -98,3 +98,6 @@ The browser suite runs accessibility checks for every story plus keyboard, focus
 ## Reusable Header
 
 The custom [Header](docs/header.md) is a flat, full-width navigation band with desktop dropdowns, mobile navigation, and configurable branding and actions. Browse **Components / Header** in Storybook. Copy its sources into a React + Tailwind 4 app, or run `node scripts/prepare-header-example.mjs /absolute/path/to/new-app` to export a standalone Vite example. No Next.js runtime is required.
+
+## License
+MIT
